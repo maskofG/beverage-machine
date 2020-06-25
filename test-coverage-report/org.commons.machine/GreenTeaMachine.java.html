@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GreenTeaMachine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">beverage-machine</a> &gt; <a href="index.source.html" class="el_package">org.commons.machine</a> &gt; <span class="el_source">GreenTeaMachine.java</span></div><h1>GreenTeaMachine.java</h1><pre class="source lang-java linenums">package org.commons.machine;
+
+import org.commons.ingredients.BeverageComposition;
+import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.IngredientType;
+import org.exceptions.BeverageTypeNotSupportedException;
+import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class GreenTeaMachine extends BaseBeverageMachine {
+
+    private BeverageComposition beverageRecipe;
+    private Map&lt;IngredientType, Ingredient&gt; ingredientContainer;
+    private HotWaterMachine hotWaterMachine;
+
+    private GreenTeaMachine(int outlet) {
+<span class="nc" id="L23">        super(outlet);</span>
+<span class="nc" id="L24">    }</span>
+
+    @Override
+    public synchronized void retrieveBeverageItems(BeverageType type) throws RequestQuantityNotPresentException,
+            RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+<span class="nc bnc" id="L29" title="All 4 branches missed.">        if (type == null || type != BeverageType.GREEN_TEA )</span>
+<span class="nc" id="L30">            throw new BeverageTypeNotSupportedException(&quot;BeverageType=&quot;+ type + &quot; is not supported in &quot; +</span>
+<span class="nc" id="L31">                    this.getClass().getSimpleName() +&quot; machine.&quot;);</span>
+
+<span class="nc" id="L33">        checkAvailability(type);</span>
+<span class="nc" id="L34">        ingredientContainer.get(IngredientType.WATER).retrieve(beverageRecipe.getQuantity(IngredientType.WATER));</span>
+<span class="nc" id="L35">        ingredientContainer.get(IngredientType.GREEN_MIXTURE).retrieve(beverageRecipe.getQuantity(IngredientType.GREEN_MIXTURE));</span>
+<span class="nc" id="L36">        ingredientContainer.get(IngredientType.GINGER_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.GINGER_SYRUP));</span>
+<span class="nc" id="L37">        ingredientContainer.get(IngredientType.SUGAR_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));</span>
+<span class="nc" id="L38">    }</span>
+
+    private void checkAvailability(BeverageType type)
+            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+<span class="nc bnc" id="L42" title="All 4 branches missed.">        if (type == null || type != BeverageType.GREEN_TEA )</span>
+<span class="nc" id="L43">            throw new BeverageTypeNotSupportedException(&quot;BeverageType=&quot;+ type + &quot; is not supported in &quot; +</span>
+<span class="nc" id="L44">                    this.getClass().getSimpleName() +&quot; machine.&quot;);</span>
+
+<span class="nc" id="L46">        checkHotWater();</span>
+<span class="nc" id="L47">        ingredientContainer.get(IngredientType.GREEN_MIXTURE).check(beverageRecipe.getQuantity(IngredientType.GREEN_MIXTURE));</span>
+<span class="nc" id="L48">        ingredientContainer.get(IngredientType.GINGER_SYRUP).check(beverageRecipe.getQuantity(IngredientType.GINGER_SYRUP));</span>
+<span class="nc" id="L49">        ingredientContainer.get(IngredientType.SUGAR_SYRUP).check(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));</span>
+<span class="nc" id="L50">    }</span>
+
+    private void checkHotWater()
+            throws RequestedQuantityNotSufficientException, RequestQuantityNotPresentException, BeverageTypeNotSupportedException {
+        try {
+<span class="nc" id="L55">            ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));</span>
+<span class="nc" id="L56">        } catch (RequestQuantityNotPresentException rqnpe) {</span>
+<span class="nc" id="L57">            throw new RequestQuantityNotPresentException(&quot;hot_water is not available&quot;);</span>
+<span class="nc" id="L58">        } catch (RequestedQuantityNotSufficientException e) {</span>
+<span class="nc" id="L59">            throw new RequestedQuantityNotSufficientException(&quot;hot_water is not sufficient&quot;);</span>
+<span class="nc" id="L60">        }</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public int ingredientLevel(IngredientType type) {
+<span class="nc" id="L65">        int level = 0;</span>
+<span class="nc bnc" id="L66" title="All 5 branches missed.">        switch (type) {</span>
+<span class="nc" id="L67">            case WATER:         level = ingredientContainer.get(IngredientType.WATER).quantity();</span>
+<span class="nc" id="L68">                                break;</span>
+<span class="nc" id="L69">            case GREEN_MIXTURE: level = ingredientContainer.get(IngredientType.GREEN_MIXTURE).quantity();</span>
+<span class="nc" id="L70">                                break;</span>
+<span class="nc" id="L71">            case GINGER_SYRUP:  level = ingredientContainer.get(IngredientType.GINGER_SYRUP).quantity();</span>
+<span class="nc" id="L72">                                break;</span>
+<span class="nc" id="L73">            case SUGAR_SYRUP:   level = ingredientContainer.get(IngredientType.SUGAR_SYRUP).quantity();</span>
+                                break;
+        }
+<span class="nc" id="L76">        return level;</span>
+    }
+
+    @Override
+    public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
+<span class="nc bnc" id="L81" title="All 5 branches missed.">        switch (type) {</span>
+<span class="nc" id="L82">            case WATER:         ingredientContainer.get(IngredientType.WATER).refill(amount);</span>
+<span class="nc" id="L83">                                break;</span>
+<span class="nc" id="L84">            case GREEN_MIXTURE: ingredientContainer.get(IngredientType.GREEN_MIXTURE).refill(amount);</span>
+<span class="nc" id="L85">                                break;</span>
+<span class="nc" id="L86">            case GINGER_SYRUP:  ingredientContainer.get(IngredientType.GINGER_SYRUP).refill(amount);</span>
+<span class="nc" id="L87">                                break;</span>
+<span class="nc" id="L88">            case SUGAR_SYRUP:   ingredientContainer.get(IngredientType.SUGAR_SYRUP).refill(amount);</span>
+<span class="nc" id="L89">                                break;</span>
+<span class="nc" id="L90">            default:            throw new IncorrectIngredientTypeException(&quot;Refilling of Ingredient Type=&quot; + type +</span>
+<span class="nc" id="L91">                                &quot; is not supported in &quot; + getClass().getSimpleName());</span>
+        }
+<span class="nc" id="L93">    }</span>
+
+    @Override
+    public List&lt;IngredientType&gt; ingredientsRunningLow() {
+<span class="nc" id="L97">        List&lt;IngredientType&gt; ingredientTypeList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.WATER).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.WATER)) {
+<span class="nc" id="L100">            ingredientTypeList.add(IngredientType.WATER);</span>
+        }
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.GREEN_MIXTURE).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.GREEN_MIXTURE)){
+<span class="nc" id="L104">            ingredientTypeList.add(IngredientType.GREEN_MIXTURE);</span>
+        }
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.GINGER_SYRUP).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.GINGER_SYRUP)) {
+<span class="nc" id="L108">            ingredientTypeList.add(IngredientType.GINGER_SYRUP);</span>
+        }
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.SUGAR_SYRUP).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.SUGAR_SYRUP)) {
+<span class="nc" id="L112">            ingredientTypeList.add(IngredientType.SUGAR_SYRUP);</span>
+        }
+
+<span class="nc" id="L115">        return ingredientTypeList;</span>
+    }
+
+<span class="nc" id="L118">    public static class Builder {</span>
+        private int outlet;
+<span class="nc" id="L120">        private Map&lt;IngredientType, Ingredient&gt; ingredientContainer = new HashMap&lt;&gt;();</span>
+        private BeverageComposition beverageRecipe;
+        private Ingredient water;
+        private Ingredient greenMixture;
+        private Ingredient gingerSyrup;
+        private Ingredient sugarSyrup;
+
+        public Builder outlet(int outlet) {
+<span class="nc" id="L128">            this.outlet = outlet;</span>
+<span class="nc" id="L129">            return this;</span>
+        }
+
+        public Builder addIngredient(Ingredient ingredient) {
+<span class="nc bnc" id="L133" title="All 5 branches missed.">            switch(ingredient.type()) {</span>
+<span class="nc" id="L134">                case WATER:         water = ingredient;</span>
+<span class="nc" id="L135">                                    ingredientContainer.put(IngredientType.WATER, ingredient);</span>
+<span class="nc" id="L136">                                    break;</span>
+<span class="nc" id="L137">                case GREEN_MIXTURE: greenMixture = ingredient;</span>
+<span class="nc" id="L138">                                    ingredientContainer.put(IngredientType.GREEN_MIXTURE, ingredient);</span>
+<span class="nc" id="L139">                                    break;</span>
+<span class="nc" id="L140">                case GINGER_SYRUP:  gingerSyrup = ingredient;</span>
+<span class="nc" id="L141">                                    ingredientContainer.put(IngredientType.GINGER_SYRUP, ingredient);</span>
+<span class="nc" id="L142">                                    break;</span>
+<span class="nc" id="L143">                case SUGAR_SYRUP:   sugarSyrup = ingredient;</span>
+<span class="nc" id="L144">                                    ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredient);</span>
+<span class="nc" id="L145">                                    break;</span>
+<span class="nc" id="L146">                default: throw new IllegalArgumentException(&quot;cannot accept ingredient other than &quot; +</span>
+                        &quot;[water,green_mixture,ginger_syrup,sugar_syrup]&quot;);
+            }
+<span class="nc" id="L149">            return this;</span>
+        }
+
+        public Builder addRecipe(BeverageComposition beverageComposition) {
+<span class="nc" id="L153">            this.beverageRecipe = beverageComposition;</span>
+<span class="nc" id="L154">            return this;</span>
+        }
+
+        public GreenTeaMachine build(){
+<span class="nc bnc" id="L158" title="All 10 branches missed.">            if (beverageRecipe == null || water == null || greenMixture == null ||</span>
+                    gingerSyrup == null || sugarSyrup == null)
+<span class="nc" id="L160">                throw new IllegalArgumentException(&quot;argument for &quot; + GreenTeaMachine.class.getSimpleName() +</span>
+                        &quot; construction is not correct.&quot;);
+
+<span class="nc" id="L163">            GreenTeaMachine greenTeaMachine = new GreenTeaMachine(outlet);</span>
+<span class="nc" id="L164">            greenTeaMachine.beverageRecipe = beverageRecipe;</span>
+<span class="nc" id="L165">            greenTeaMachine.ingredientContainer = ingredientContainer;</span>
+<span class="nc" id="L166">            return greenTeaMachine;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

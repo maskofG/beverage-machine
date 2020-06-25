@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ElaichiTeaMachine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">beverage-machine</a> &gt; <a href="index.source.html" class="el_package">org.commons.machine</a> &gt; <span class="el_source">ElaichiTeaMachine.java</span></div><h1>ElaichiTeaMachine.java</h1><pre class="source lang-java linenums">package org.commons.machine;
+
+import org.commons.ingredients.BeverageComposition;
+import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.IngredientType;
+import org.exceptions.BeverageTypeNotSupportedException;
+import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ElaichiTeaMachine extends BaseBeverageMachine {
+
+    private BeverageComposition beverageRecipe;
+    private Map&lt;IngredientType, Ingredient&gt; ingredientContainer;
+
+    private ElaichiTeaMachine(int outlet) {
+<span class="nc" id="L22">        super(outlet);</span>
+<span class="nc" id="L23">    }</span>
+
+    @Override
+    public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
+            RequestQuantityNotPresentException, RequestedQuantityNotSufficientException {
+<span class="nc bnc" id="L28" title="All 4 branches missed.">        if (type == null || type != BeverageType.ELAICHI_TEA )</span>
+<span class="nc" id="L29">            throw new BeverageTypeNotSupportedException(&quot;BeverageType=&quot;+ type + &quot; is not supported in &quot; +</span>
+<span class="nc" id="L30">                    this.getClass().getSimpleName() +&quot; machine.&quot;);</span>
+
+<span class="nc" id="L32">        checkAvailability(type);</span>
+<span class="nc" id="L33">        ingredientContainer.get(IngredientType.WATER).retrieve(beverageRecipe.getQuantity(IngredientType.WATER));</span>
+<span class="nc" id="L34">        ingredientContainer.get(IngredientType.MILK).retrieve(beverageRecipe.getQuantity(IngredientType.MILK));</span>
+<span class="nc" id="L35">        ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.TEA_LEAVES_SYRUP));</span>
+<span class="nc" id="L36">        ingredientContainer.get(IngredientType.ELAICHI_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.ELAICHI_SYRUP));</span>
+<span class="nc" id="L37">        ingredientContainer.get(IngredientType.SUGAR_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));</span>
+<span class="nc" id="L38">    }</span>
+
+    private void checkAvailability(BeverageType type)
+            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+<span class="nc bnc" id="L42" title="All 4 branches missed.">        if (type == null || type != BeverageType.ELAICHI_TEA )</span>
+<span class="nc" id="L43">            throw new BeverageTypeNotSupportedException(&quot;BeverageType=&quot;+ type + &quot; is not supported in &quot; +</span>
+<span class="nc" id="L44">                    this.getClass().getSimpleName() +&quot; machine.&quot;);</span>
+
+<span class="nc" id="L46">        checkHotWater();</span>
+<span class="nc" id="L47">        checkHotMilk();</span>
+<span class="nc" id="L48">        ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP)</span>
+<span class="nc" id="L49">                .check(beverageRecipe.getQuantity(IngredientType.TEA_LEAVES_SYRUP));</span>
+<span class="nc" id="L50">        ingredientContainer.get(IngredientType.ELAICHI_SYRUP)</span>
+<span class="nc" id="L51">                .check(beverageRecipe.getQuantity(IngredientType.ELAICHI_SYRUP));</span>
+<span class="nc" id="L52">        ingredientContainer.get(IngredientType.SUGAR_SYRUP)</span>
+<span class="nc" id="L53">                .check(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));</span>
+<span class="nc" id="L54">    }</span>
+
+    private void checkHotWater()
+            throws RequestedQuantityNotSufficientException, RequestQuantityNotPresentException {
+        try {
+<span class="nc" id="L59">            ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));</span>
+<span class="nc" id="L60">        } catch (RequestQuantityNotPresentException rqnpe) {</span>
+<span class="nc" id="L61">            throw new RequestQuantityNotPresentException(&quot;hot_water is not available&quot;);</span>
+<span class="nc" id="L62">        } catch (RequestedQuantityNotSufficientException e) {</span>
+<span class="nc" id="L63">            throw new RequestedQuantityNotSufficientException(&quot;hot_water is not sufficient&quot;);</span>
+<span class="nc" id="L64">        }</span>
+<span class="nc" id="L65">    }</span>
+
+    private void checkHotMilk()
+            throws RequestedQuantityNotSufficientException, RequestQuantityNotPresentException {
+        try {
+<span class="nc" id="L70">            ingredientContainer.get(IngredientType.MILK).check(beverageRecipe.getQuantity(IngredientType.MILK));</span>
+<span class="nc" id="L71">        } catch (RequestQuantityNotPresentException rqnpe) {</span>
+<span class="nc" id="L72">            throw new RequestQuantityNotPresentException(&quot;hot_milk is not available&quot;);</span>
+<span class="nc" id="L73">        } catch (RequestedQuantityNotSufficientException e) {</span>
+<span class="nc" id="L74">            throw new RequestedQuantityNotSufficientException(&quot;hot_milk is not sufficient&quot;);</span>
+<span class="nc" id="L75">        }</span>
+<span class="nc" id="L76">    }</span>
+
+    @Override
+    public int ingredientLevel(IngredientType type) {
+<span class="nc" id="L80">        int level = 0;</span>
+<span class="nc bnc" id="L81" title="All 6 branches missed.">        switch (type) {</span>
+<span class="nc" id="L82">            case WATER:             level = ingredientContainer.get(IngredientType.WATER).quantity();</span>
+<span class="nc" id="L83">                                    break;</span>
+<span class="nc" id="L84">            case MILK:              level = ingredientContainer.get(IngredientType.MILK).quantity();</span>
+<span class="nc" id="L85">                                    break;</span>
+<span class="nc" id="L86">            case TEA_LEAVES_SYRUP:  level = ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP).quantity();</span>
+<span class="nc" id="L87">                                    break;</span>
+<span class="nc" id="L88">            case ELAICHI_SYRUP:     level = ingredientContainer.get(IngredientType.ELAICHI_SYRUP).quantity();</span>
+<span class="nc" id="L89">                                    break;</span>
+<span class="nc" id="L90">            case SUGAR_SYRUP:       level = ingredientContainer.get(IngredientType.SUGAR_SYRUP).quantity();</span>
+                                    break;
+        }
+<span class="nc" id="L93">        return level;</span>
+    }
+
+    @Override
+    public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
+<span class="nc bnc" id="L98" title="All 6 branches missed.">        switch (type) {</span>
+<span class="nc" id="L99">            case WATER:             ingredientContainer.get(IngredientType.WATER).refill(amount);</span>
+<span class="nc" id="L100">                                    break;</span>
+<span class="nc" id="L101">            case MILK:              ingredientContainer.get(IngredientType.MILK).refill(amount);</span>
+<span class="nc" id="L102">                                    break;</span>
+<span class="nc" id="L103">            case TEA_LEAVES_SYRUP:  ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP).refill(amount);</span>
+<span class="nc" id="L104">                                    break;</span>
+<span class="nc" id="L105">            case ELAICHI_SYRUP:     ingredientContainer.get(IngredientType.ELAICHI_SYRUP).refill(amount);</span>
+<span class="nc" id="L106">                                    break;</span>
+<span class="nc" id="L107">            case SUGAR_SYRUP:       ingredientContainer.get(IngredientType.SUGAR_SYRUP).refill(amount);</span>
+<span class="nc" id="L108">                                    break;</span>
+<span class="nc" id="L109">            default:                throw new IncorrectIngredientTypeException(&quot;Refilling of Ingredient Type=&quot; + type +</span>
+<span class="nc" id="L110">                                    &quot; is not supported in &quot; + getClass().getSimpleName());</span>
+        }
+<span class="nc" id="L112">    }</span>
+
+    @Override
+    public List&lt;IngredientType&gt; ingredientsRunningLow() {
+<span class="nc" id="L116">        List&lt;IngredientType&gt; ingredientTypeList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.WATER).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.WATER)) {
+<span class="nc" id="L119">            ingredientTypeList.add(IngredientType.WATER);</span>
+        }
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.MILK).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.MILK)){
+<span class="nc" id="L123">            ingredientTypeList.add(IngredientType.MILK);</span>
+        }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.TEA_LEAVES_SYRUP)){
+<span class="nc" id="L127">            ingredientTypeList.add(IngredientType.TEA_LEAVES_SYRUP);</span>
+        }
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.ELAICHI_SYRUP).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.ELAICHI_SYRUP)) {
+<span class="nc" id="L131">            ingredientTypeList.add(IngredientType.ELAICHI_SYRUP);</span>
+        }
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (ingredientContainer.get(IngredientType.SUGAR_SYRUP).quantity() &lt; beverageRecipe.getQuantity(</span>
+                IngredientType.SUGAR_SYRUP)) {
+<span class="nc" id="L135">            ingredientTypeList.add(IngredientType.SUGAR_SYRUP);</span>
+        }
+
+<span class="nc" id="L138">        return ingredientTypeList;</span>
+    }
+
+<span class="nc" id="L141">    public static class Builder {</span>
+        private int outlet;
+<span class="nc" id="L143">        private Map&lt;IngredientType, Ingredient&gt; ingredientContainer = new HashMap&lt;&gt;();</span>
+        private BeverageComposition beverageRecipe;
+        private Ingredient water;
+        private Ingredient milk;
+        private Ingredient teaLeavesSyrup;
+        private Ingredient elaichiSyrup;
+        private Ingredient sugarSyrup;
+
+        public Builder outlet(int outlet) {
+<span class="nc" id="L152">            this.outlet = outlet;</span>
+<span class="nc" id="L153">            return this;</span>
+        }
+
+        public Builder addIngredient(Ingredient ingredient) {
+<span class="nc bnc" id="L157" title="All 6 branches missed.">            switch (ingredient.type()) {</span>
+<span class="nc" id="L158">                case WATER:             water = ingredient;</span>
+<span class="nc" id="L159">                                        ingredientContainer.put(IngredientType.WATER, ingredient);</span>
+<span class="nc" id="L160">                                        break;</span>
+<span class="nc" id="L161">                case MILK:              milk = ingredient;</span>
+<span class="nc" id="L162">                                        ingredientContainer.put(IngredientType.MILK, ingredient);</span>
+<span class="nc" id="L163">                                        break;</span>
+<span class="nc" id="L164">                case TEA_LEAVES_SYRUP:  teaLeavesSyrup = ingredient;</span>
+<span class="nc" id="L165">                                        ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, ingredient);</span>
+<span class="nc" id="L166">                                        break;</span>
+<span class="nc" id="L167">                case ELAICHI_SYRUP:     elaichiSyrup = ingredient;</span>
+<span class="nc" id="L168">                                        ingredientContainer.put(IngredientType.ELAICHI_SYRUP, ingredient);</span>
+<span class="nc" id="L169">                                        break;</span>
+<span class="nc" id="L170">                case SUGAR_SYRUP:       sugarSyrup = ingredient;</span>
+<span class="nc" id="L171">                                        ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredient);</span>
+<span class="nc" id="L172">                                        break;</span>
+<span class="nc" id="L173">                default:                throw new IllegalArgumentException(&quot;cannot accept ingredient other than &quot; +</span>
+                                        &quot;[tea_leaves_syrup,elaichi_syrup,sugar_syrup]&quot;);
+            }
+<span class="nc" id="L176">            return this;</span>
+        }
+
+        public Builder addRecipe(BeverageComposition beverageComposition) {
+<span class="nc" id="L180">            this.beverageRecipe = beverageComposition;</span>
+<span class="nc" id="L181">            return this;</span>
+        }
+
+        public ElaichiTeaMachine build() {
+<span class="nc bnc" id="L185" title="All 12 branches missed.">            if (beverageRecipe == null || water == null || milk == null ||</span>
+                    teaLeavesSyrup == null || elaichiSyrup == null || sugarSyrup == null)
+<span class="nc" id="L187">                throw new IllegalArgumentException(&quot;argument for &quot; + ElaichiTeaMachine.class.getSimpleName() +</span>
+                        &quot; construction is not correct.&quot;);
+
+<span class="nc" id="L190">            ElaichiTeaMachine elaichiTeaMachine = new ElaichiTeaMachine(outlet);</span>
+<span class="nc" id="L191">            elaichiTeaMachine.ingredientContainer = ingredientContainer;</span>
+<span class="nc" id="L192">            elaichiTeaMachine.beverageRecipe = beverageRecipe;</span>
+<span class="nc" id="L193">            return elaichiTeaMachine;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

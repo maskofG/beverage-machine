@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HotWaterMachine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">beverage-machine</a> &gt; <a href="index.source.html" class="el_package">org.commons.machine</a> &gt; <span class="el_source">HotWaterMachine.java</span></div><h1>HotWaterMachine.java</h1><pre class="source lang-java linenums">package org.commons.machine;
+
+import org.commons.ingredients.BeverageComposition;
+import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.IngredientType;
+import org.exceptions.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class HotWaterMachine extends BaseBeverageMachine {
+
+    private BeverageComposition beverageRecipe;
+    private Ingredient water;
+
+    private HotWaterMachine(int outletNumber){
+<span class="fc" id="L18">        super(outletNumber);</span>
+<span class="fc" id="L19">    }</span>
+
+    @Override
+    public synchronized void retrieveBeverageItems(BeverageType type) throws RequestQuantityNotPresentException,
+            RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+<span class="pc bpc" id="L24" title="1 of 4 branches missed.">        if (type == null || type != BeverageType.HOT_WATER )</span>
+<span class="fc" id="L25">            throw new BeverageTypeNotSupportedException(&quot;BeverageType=&quot;+ type + &quot; &quot; + BeverageOutputMessage.NOT_SUPPORTED</span>
+<span class="fc" id="L26">                    + &quot; in &quot; + this.getClass().getSimpleName() +&quot; machine.&quot;);</span>
+<span class="fc" id="L27">        checkAvailability();</span>
+<span class="fc" id="L28">        water.retrieve(beverageRecipe.getQuantity(IngredientType.WATER));</span>
+<span class="fc" id="L29">    }</span>
+
+    private void checkAvailability()
+            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException{
+<span class="fc" id="L33">        water.check(beverageRecipe.getQuantity(IngredientType.WATER));</span>
+<span class="fc" id="L34">    }</span>
+
+    @Override
+    public int ingredientLevel(IngredientType type) {
+<span class="pc bpc" id="L38" title="2 of 4 branches missed.">        if (type == null || type != IngredientType.WATER) return 0;</span>
+<span class="fc" id="L39">        return water.quantity();</span>
+    }
+
+    @Override
+    public synchronized void refillIngredient(IngredientType type, int amount)
+            throws IncorrectIngredientTypeException{
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">        if (type == null || type != IngredientType.WATER)</span>
+<span class="nc" id="L46">            throw new IncorrectIngredientTypeException(&quot;Refilling of Ingredient Type=&quot; + type</span>
+<span class="nc" id="L47">                    + BeverageOutputMessage.NOT_SUPPORTED  + &quot; in &quot; + this.getClass().getSimpleName());</span>
+<span class="fc" id="L48">        water.refill(amount);</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public List&lt;IngredientType&gt; ingredientsRunningLow() {
+<span class="fc" id="L53">        List&lt;IngredientType&gt; ingr = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (water.quantity() &lt; beverageRecipe.getQuantity(IngredientType.WATER)) {</span>
+<span class="fc" id="L55">            ingr.add(IngredientType.WATER);</span>
+        }
+<span class="fc" id="L57">        return ingr;</span>
+    }
+
+<span class="fc" id="L60">    public static class Builder {</span>
+        private BeverageComposition beverageComposition;
+        private Ingredient water;
+        private int outlet;
+
+        public Builder outlet(int outlet){
+<span class="fc" id="L66">            this.outlet = outlet;</span>
+<span class="fc" id="L67">            return this;</span>
+        }
+
+        public Builder water(Ingredient ingredient){
+<span class="fc" id="L71">            this.water = ingredient;</span>
+<span class="fc" id="L72">            return this;</span>
+        }
+
+        public Builder beverageComposition(BeverageComposition beverageComposition){
+<span class="fc" id="L76">            this.beverageComposition = beverageComposition;</span>
+<span class="fc" id="L77">            return this;</span>
+        }
+
+        public HotWaterMachine build(){
+<span class="pc bpc" id="L81" title="2 of 4 branches missed.">            if (water == null || beverageComposition == null) throw new IllegalArgumentException(&quot;argument for &quot;</span>
+<span class="nc" id="L82">                    + HotWaterMachine.class.getSimpleName() + &quot; construction is not correct.&quot;);</span>
+<span class="fc" id="L83">            HotWaterMachine hotWaterMachine = new HotWaterMachine(outlet);</span>
+<span class="fc" id="L84">            hotWaterMachine.water = water;</span>
+<span class="fc" id="L85">            hotWaterMachine.beverageRecipe = beverageComposition;</span>
+<span class="fc" id="L86">            return hotWaterMachine;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
