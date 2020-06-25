@@ -180,7 +180,7 @@ The testing is done using [Junit](https://junit.org/junit5/) and coverage report
 
 Report:
 
-![alt_text](archive/test_coverage_report.png)
+![alt_text](archive/images/test_coverage_report.png)
 
 
 
