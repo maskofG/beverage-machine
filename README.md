@@ -83,7 +83,7 @@ Output 3
 - hot_tea cannot be prepared because item hot_water is not sufficient 
 
 
-###### Structure of the code:
+**Structure of the code:**
 
 With code reuse as my primary motive, I started with Beverage Machine interface,
 which lays out the functionality of any beverage machine, alongwith an abstract
@@ -108,7 +108,9 @@ Hence I reused these core machine components to build a multi-functionality beve
 machine - "chai point machine" which serves - hot water, hot milk, green tea,
 ginger tea, elaichi tea, hot coffee.
 
-###### Class diagram:
+**Class diagram:**
+![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/beverage_machine.png?raw=true)
+
 
 
 
