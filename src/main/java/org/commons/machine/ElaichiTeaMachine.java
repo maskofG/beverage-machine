@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  Elaichi tea beverage machine which brews cups of elaichi tea paralelly for
+ *  outlet number of people
+ *  Its works on water,milk,tea leaves syrup,elaichi syrup, sugar syrup as its ingredient.
+ */
 public class ElaichiTeaMachine extends BaseBeverageMachine {
 
     private BeverageComposition beverageRecipe;

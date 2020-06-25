@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  Ginger tea beverage machine which brews cups of ginger tea paralelly for
+ *  outlet number of people
+ *  Its works on water,milk,tea leaves syrup,ginger syrup, sugar syrup as its ingredient.
+ */
 public class GingerTeaMachine extends BaseBeverageMachine {
 
     private BeverageComposition beverageRecipe;
@@ -26,32 +31,36 @@ public class GingerTeaMachine extends BaseBeverageMachine {
     public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
             RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         if (type == null || type != BeverageType.GINGER_TEA )
-            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
-                    this.getClass().getSimpleName() +" machine.");
+            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " +
+                    BeverageOutputMessage.NOT_SUPPORTED + " in " + this.getClass().getSimpleName());
 
-        checkAvailability(type);
-        ingredientContainer.get(IngredientType.WATER).retrieve(beverageRecipe.getQuantity(IngredientType.WATER));
-        ingredientContainer.get(IngredientType.MILK).retrieve(beverageRecipe.getQuantity(IngredientType.MILK));
-        ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.TEA_LEAVES_SYRUP));
-        ingredientContainer.get(IngredientType.GINGER_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.GINGER_SYRUP));
-        ingredientContainer.get(IngredientType.SUGAR_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
+        checkAvailability();
+        ingredientContainer.get(IngredientType.WATER)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.WATER));
+        ingredientContainer.get(IngredientType.MILK)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.MILK));
+        ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.TEA_LEAVES_SYRUP));
+        ingredientContainer.get(IngredientType.GINGER_SYRUP)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.GINGER_SYRUP));
+        ingredientContainer.get(IngredientType.SUGAR_SYRUP)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
     }
 
-    private void checkAvailability(BeverageType type)
+    private void checkAvailability()
             throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
-        if (type == null || type != BeverageType.GINGER_TEA )
-            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
-                    this.getClass().getSimpleName() +" machine.");
-
         checkHotWater();
         checkHotMilk();
-        ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP).check(beverageRecipe.getQuantity(IngredientType.TEA_LEAVES_SYRUP));
-        ingredientContainer.get(IngredientType.GINGER_SYRUP).check(beverageRecipe.getQuantity(IngredientType.GINGER_SYRUP));
-        ingredientContainer.get(IngredientType.SUGAR_SYRUP).check(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
+        ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP)
+                .check(beverageRecipe.getQuantity(IngredientType.TEA_LEAVES_SYRUP));
+        ingredientContainer.get(IngredientType.GINGER_SYRUP)
+                .check(beverageRecipe.getQuantity(IngredientType.GINGER_SYRUP));
+        ingredientContainer.get(IngredientType.SUGAR_SYRUP)
+                .check(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
     }
 
     private void checkHotWater()
-            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException, BeverageTypeNotSupportedException {
+            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));
         } catch (RequestedQuantityNotPresentException rqnpe) {

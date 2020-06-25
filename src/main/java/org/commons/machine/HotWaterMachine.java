@@ -56,7 +56,8 @@ public class HotWaterMachine extends BaseBeverageMachine {
     }
 
     /**
-     *  check availability of the ingredient, generally checked before retrieving the ingredients.
+     *  check availability of the ingredient in the container,
+     *  generally checked before retrieving the ingredients.
      *  And if any of the ingredient is not present or is not insufficient, it throws either
      * of the two exceptions.
      * if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
