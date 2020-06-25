@@ -85,5 +85,33 @@ Output 3
 
 ###### Structure of the code:
 
+With code reuse as my primary motive, I started with Beverage Machine interface,
+which lays out the functionality of any beverage machine, alongwith an abstract
+BaseBeverageMachine class which implements N outlet beverage machine, leaving the
+feature of beverage preparation method for concrete beverage machine class. 
+
+Using BaseBeverageMachine, I created basic-beverage machine, which can be used to
+build any custom beverage machine. The basic beverage machines built are:
+
+- HotWaterBeverageMachine
+- HotMilkBeverageMachine
+- GreenTeaBeverageMachine
+- GingerTeaBeverageMachine
+- ElaichiTeaBeverageMachine
+- CoffeMachine
+
+Using the above mentioned rudimentary core beverage machine, we can build any machine
+which can any combination beverages - hot water, hot milk, green tea, ginger tea,
+elaichi tea, hot coffe.
+
+Hence I reused these core machine components to build a multi-functionality beverage
+machine - "chai point machine" which serves - hot water, hot milk, green tea,
+ginger tea, elaichi tea, hot coffee.
+
+###### Class diagram:
+
+
+
+
 
 
