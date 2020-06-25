@@ -30,11 +30,11 @@ machine - "chai point machine" which serves - hot water, hot milk, green tea,
 ginger tea, elaichi tea, hot coffee.
 
 **Class diagram:**
-![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/beverage_machine.png?raw=true)
+![alt text](archive/images/beverage_machine.png?raw=true)
 
-![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/ingredient_and_beverage_type.png?raw=true)
+![alt text](archive/images/ingredient_and_beverage_type.png?raw=true)
 
-#### <div class="text-purple">BeverageComposition:</div>
+#### BeverageComposition:
 This class is the recipe book of a beverage and tells quantity of ingredients needed
 to prepare a particular beverage. So there are will a beverageComposition instance
 for green tea, there can be a different beverage composition for hot coffee, a 
@@ -178,7 +178,9 @@ using the data in this file. The file looks like:
 ```
 The testing is done using [Junit](https://junit.org/junit5/) and coverage report is generated using [Jacoco](https://www.eclemma.org/jacoco/).
 
+Report:
 
+![alt_text](archive/test_coverage_report.png)
 
 
 
