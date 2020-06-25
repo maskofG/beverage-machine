@@ -104,7 +104,7 @@
             </goals>
             <!-- default target/jscoco/site/* -->
             <configuration>
-              <outputDirectory>${basedir}/test-coverage-report</outputDirectory>
+              <outputDirectory>target/test-coverage-report</outputDirectory>
             </configuration>
           </execution>
         </executions>
