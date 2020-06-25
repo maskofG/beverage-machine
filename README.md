@@ -34,18 +34,18 @@ ginger tea, elaichi tea, hot coffee.
 
 ![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/ingredient_and_beverage_type.png?raw=true)
 
-###### BeverageComposition:
+#### BeverageComposition:
 This class is the recipe book of a beverage and tells quantity of ingredients needed
 to prepare a particular beverage. So there are will a beverageComposition instance
 for green tea, there can be a different beverage composition for hot coffee, a 
 different beverage composition for chai point's green tea.
 
-###### BeverageType:
+#### BeverageType:
 It enumerates all the type of beverages supported by our library. If we want to
 add a new beverage, this will be the starting point where we will add an enum
 for the corresponding beverage type.
 
-###### IngredientType:
+#### IngredientType:
 It enumerates all the types of ingredient supported by our library which serves
 as the ingredients to prepare a beverage. The ingredient types are -
 - water
@@ -57,7 +57,7 @@ as the ingredients to prepare a beverage. The ingredient types are -
 - coffee syrup
 
 
-###### Ingredient:
+#### Ingredient:
 It is an interface which fixes the functionality an instance of ingredient will 
 expose. The functionalities are associated with -
 - getType
@@ -66,12 +66,12 @@ expose. The functionalities are associated with -
 - allowing refill of the ingredient
 - retrieving a fixed amount of ingredient for beverage preparation
 
-###### ConcreteIngredient:
+#### ConcreteIngredient:
 Its an implementation of Ingredient interface and ingredient will be an instance 
 of this class. The ingredient type and amount of the ingredient passed in the 
 argument will differ for different ingredient instance created.
 
-###### BaseBeverageMachine:
+#### BaseBeverageMachine:
 It implements the basic functionality of allowing N parallel requests(or people) 
 to prepare beverage. This has been ensured with "N" semaphore. It also calls 
 abstrace function "retrieve(BeverageType type)" to retrive the ingredients required for a beverage type. The
@@ -82,7 +82,7 @@ So the concrete beverage machine can extend this class and depending on which ty
 of beverage they are willing to offer they can implement "retrieve(BeverageType type)"
 method.
 
-###### HotWaterMachine:
+#### HotWaterMachine:
 This extends "BaseBeverageMachine" and implements a thread-safe version of
 "retrieve(BeverageType type)" using synchronised construct at method level. This
 machine only dispenses hot water and quantity is controlled by an associated
@@ -104,7 +104,7 @@ to and check the quantity of each ingredient in the machine.
 Similarly **HotMilkMachine, GreenTeaMachine, GingerTeachMachine, ElaichiTeaMachine,
 CoffeeMachine** is implemented.
 
-###### ChaiPointMachine
+#### ChaiPointMachine
 This also inherits BaseBeverageMachine class but it is built using components of
 already built machine i.e - HotMilkMachine, GreenTeaMachine ... etc.
 
@@ -126,7 +126,7 @@ allow any machine to prepare beverage which needs water.
 Testing is done by reading input_test.json and testing all beverage machine classes 
 using the data in this file. The file looks like:
 
-
+```
 {
   "machine": {
     "outlets": {
@@ -175,7 +175,7 @@ using the data in this file. The file looks like:
     }
   }
 }
-
+```
 The testing is done using [Junit](https://junit.org/junit5/) and coverage report is generated using [Jacoco](https://www.eclemma.org/jacoco/).
 
 
