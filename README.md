@@ -111,6 +111,7 @@ ginger tea, elaichi tea, hot coffee.
 **Class diagram:**
 ![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/beverage_machine.png?raw=true)
 
+![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/ingredient_and_beverage_type.png?raw=true)
 
 
 
