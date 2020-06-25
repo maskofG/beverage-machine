@@ -1,5 +1,8 @@
 package org.commons.ingredients;
-
+/**
+ * enumerated types of ingredients to brew beverages
+ *
+ */
 public enum IngredientType {
     WATER("water", 0),
     MILK ("milk", 1),
