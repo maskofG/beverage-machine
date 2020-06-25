@@ -1,5 +1,9 @@
 package org.commons.machine;
 
+/**
+ * standardising few of the key messages brewed out of the beverage machine
+ *
+ */
 public class BeverageOutputMessage {
     public static final String PREPARED = "is prepared";
     public static final String NOT_PREPARED = "cannot be prepared";

@@ -1,11 +1,11 @@
 package org.commons.machine;
 
 import org.commons.ingredients.BeverageComposition;
-import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
-import org.exceptions.RequestQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotPresentException;
 import org.exceptions.RequestedQuantityNotSufficientException;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class CoffeeMachine extends BaseBeverageMachine {
     private BeverageComposition beverageRecipe;
-    private Map<IngredientType, Ingredient> ingredientContainer;
+    private Map<IngredientType, IngredientContainer> ingredientContainer;
 
     private CoffeeMachine(int outlet) {
         super(outlet);
@@ -23,7 +23,7 @@ public class CoffeeMachine extends BaseBeverageMachine {
 
     @Override
     public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
-            RequestQuantityNotPresentException, RequestedQuantityNotSufficientException {
+            RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         if (type == null || type != BeverageType.HOT_COFFEE )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
                     this.getClass().getSimpleName() +" machine.");
@@ -37,7 +37,7 @@ public class CoffeeMachine extends BaseBeverageMachine {
 
 
     private void checkAvailability(BeverageType type)
-            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
         if (type == null || type != BeverageType.HOT_COFFEE )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
                     this.getClass().getSimpleName() +" machine.");
@@ -51,22 +51,22 @@ public class CoffeeMachine extends BaseBeverageMachine {
     }
 
     private void checkHotWater()
-            throws RequestedQuantityNotSufficientException, RequestQuantityNotPresentException{
+            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));
-        } catch (RequestQuantityNotPresentException rqnpe) {
-            throw new RequestQuantityNotPresentException("hot_water is not available");
+        } catch (RequestedQuantityNotPresentException rqnpe) {
+            throw new RequestedQuantityNotPresentException("hot_water is not available");
         } catch (RequestedQuantityNotSufficientException e) {
             throw new RequestedQuantityNotSufficientException("hot_water is not sufficient");
         }
     }
 
     private void checkHotMilk()
-            throws RequestedQuantityNotSufficientException, RequestQuantityNotPresentException{
+            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.MILK).check(beverageRecipe.getQuantity(IngredientType.MILK));
-        } catch (RequestQuantityNotPresentException rqnpe) {
-            throw new RequestQuantityNotPresentException("hot_milk is not available");
+        } catch (RequestedQuantityNotPresentException rqnpe) {
+            throw new RequestedQuantityNotPresentException("hot_milk is not available");
         } catch (RequestedQuantityNotSufficientException e) {
             throw new RequestedQuantityNotSufficientException("hot_milk is not sufficient");
         }
@@ -129,31 +129,31 @@ public class CoffeeMachine extends BaseBeverageMachine {
 
     public static class Builder {
         private int outlet;
-        private Map<IngredientType, Ingredient> ingredientContainer = new HashMap<>();
+        private Map<IngredientType, IngredientContainer> ingredientContainer = new HashMap<>();
         private BeverageComposition beverageRecipe;
-        private Ingredient water;
-        private Ingredient milk;
-        private Ingredient coffeeSyrup;
-        private Ingredient sugarSyrup;
+        private IngredientContainer water;
+        private IngredientContainer milk;
+        private IngredientContainer coffeeSyrup;
+        private IngredientContainer sugarSyrup;
 
         public Builder outlet(int outlet) {
             this.outlet = outlet;
             return this;
         }
 
-        public Builder addIngredient(Ingredient ingredient) {
-            switch(ingredient.type()) {
-                case WATER:         water = ingredient;
-                                    ingredientContainer.put(IngredientType.WATER, ingredient);
+        public Builder addIngredient(IngredientContainer ingredientContainer) {
+            switch(ingredientContainer.type()) {
+                case WATER:         water = ingredientContainer;
+                                    this.ingredientContainer.put(IngredientType.WATER, ingredientContainer);
                                     break;
-                case MILK:          milk = ingredient;
-                                    ingredientContainer.put(IngredientType.MILK, ingredient);
+                case MILK:          milk = ingredientContainer;
+                                    this.ingredientContainer.put(IngredientType.MILK, ingredientContainer);
                                     break;
-                case COFFEE_SYRUP:  coffeeSyrup = ingredient;
-                                    ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, ingredient);
+                case COFFEE_SYRUP:  coffeeSyrup = ingredientContainer;
+                                    this.ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, ingredientContainer);
                                     break;
-                case SUGAR_SYRUP:   sugarSyrup = ingredient;
-                                    ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredient);
+                case SUGAR_SYRUP:   sugarSyrup = ingredientContainer;
+                                    this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredientContainer);
                                     break;
                 default:            throw new IllegalArgumentException("cannot accept ingredient other than " +
                                     "[coffee_syrup,sugar_syrup]");

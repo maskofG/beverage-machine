@@ -1,11 +1,11 @@
 package org.commons.machine;
 
 import org.commons.ingredients.BeverageComposition;
-import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
-import org.exceptions.RequestQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotPresentException;
 import org.exceptions.RequestedQuantityNotSufficientException;
 
 import java.util.ArrayList;
@@ -13,10 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ */
 public class GreenTeaMachine extends BaseBeverageMachine {
 
     private BeverageComposition beverageRecipe;
-    private Map<IngredientType, Ingredient> ingredientContainer;
+    private Map<IngredientType, IngredientContainer> ingredientContainer;
     private HotWaterMachine hotWaterMachine;
 
     private GreenTeaMachine(int outlet) {
@@ -24,7 +27,7 @@ public class GreenTeaMachine extends BaseBeverageMachine {
     }
 
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type) throws RequestQuantityNotPresentException,
+    public synchronized void retrieveBeverageItems(BeverageType type) throws RequestedQuantityNotPresentException,
             RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
         if (type == null || type != BeverageType.GREEN_TEA )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
@@ -38,7 +41,7 @@ public class GreenTeaMachine extends BaseBeverageMachine {
     }
 
     private void checkAvailability(BeverageType type)
-            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
         if (type == null || type != BeverageType.GREEN_TEA )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
                     this.getClass().getSimpleName() +" machine.");
@@ -50,11 +53,11 @@ public class GreenTeaMachine extends BaseBeverageMachine {
     }
 
     private void checkHotWater()
-            throws RequestedQuantityNotSufficientException, RequestQuantityNotPresentException, BeverageTypeNotSupportedException {
+            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException, BeverageTypeNotSupportedException {
         try {
             ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));
-        } catch (RequestQuantityNotPresentException rqnpe) {
-            throw new RequestQuantityNotPresentException("hot_water is not available");
+        } catch (RequestedQuantityNotPresentException rqnpe) {
+            throw new RequestedQuantityNotPresentException("hot_water is not available");
         } catch (RequestedQuantityNotSufficientException e) {
             throw new RequestedQuantityNotSufficientException("hot_water is not sufficient");
         }
@@ -117,31 +120,31 @@ public class GreenTeaMachine extends BaseBeverageMachine {
 
     public static class Builder {
         private int outlet;
-        private Map<IngredientType, Ingredient> ingredientContainer = new HashMap<>();
+        private Map<IngredientType, IngredientContainer> ingredientContainer = new HashMap<>();
         private BeverageComposition beverageRecipe;
-        private Ingredient water;
-        private Ingredient greenMixture;
-        private Ingredient gingerSyrup;
-        private Ingredient sugarSyrup;
+        private IngredientContainer waterContainer;
+        private IngredientContainer greenMixtureContainer;
+        private IngredientContainer gingerSyrupContainer;
+        private IngredientContainer sugarSyrupContainer;
 
         public Builder outlet(int outlet) {
             this.outlet = outlet;
             return this;
         }
 
-        public Builder addIngredient(Ingredient ingredient) {
-            switch(ingredient.type()) {
-                case WATER:         water = ingredient;
-                                    ingredientContainer.put(IngredientType.WATER, ingredient);
+        public Builder addIngredientContainer(IngredientContainer container) {
+            switch(container.type()) {
+                case WATER:         waterContainer = container;
+                                    this.ingredientContainer.put(IngredientType.WATER, container);
                                     break;
-                case GREEN_MIXTURE: greenMixture = ingredient;
-                                    ingredientContainer.put(IngredientType.GREEN_MIXTURE, ingredient);
+                case GREEN_MIXTURE: greenMixtureContainer = container;
+                                    this.ingredientContainer.put(IngredientType.GREEN_MIXTURE, container);
                                     break;
-                case GINGER_SYRUP:  gingerSyrup = ingredient;
-                                    ingredientContainer.put(IngredientType.GINGER_SYRUP, ingredient);
+                case GINGER_SYRUP:  gingerSyrupContainer = container;
+                                    this.ingredientContainer.put(IngredientType.GINGER_SYRUP, container);
                                     break;
-                case SUGAR_SYRUP:   sugarSyrup = ingredient;
-                                    ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredient);
+                case SUGAR_SYRUP:   sugarSyrupContainer = container;
+                                    this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, container);
                                     break;
                 default: throw new IllegalArgumentException("cannot accept ingredient other than " +
                         "[water,green_mixture,ginger_syrup,sugar_syrup]");
@@ -149,14 +152,14 @@ public class GreenTeaMachine extends BaseBeverageMachine {
             return this;
         }
 
-        public Builder addRecipe(BeverageComposition beverageComposition) {
-            this.beverageRecipe = beverageComposition;
+        public Builder addRecipe(BeverageComposition beverageRecipe) {
+            this.beverageRecipe = beverageRecipe;
             return this;
         }
 
         public GreenTeaMachine build(){
-            if (beverageRecipe == null || water == null || greenMixture == null ||
-                    gingerSyrup == null || sugarSyrup == null)
+            if (beverageRecipe == null || waterContainer == null || greenMixtureContainer == null ||
+                    gingerSyrupContainer == null || sugarSyrupContainer == null)
                 throw new IllegalArgumentException("argument for " + GreenTeaMachine.class.getSimpleName() +
                         " construction is not correct.");
 

@@ -22,7 +22,7 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
 
     @Override
     public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
-            RequestQuantityNotPresentException, RequestedQuantityNotSufficientException {
+            RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         switch (type) {
             case HOT_WATER:     hotWaterMachine.retrieveBeverageItems(BeverageType.HOT_WATER);
                                 break;

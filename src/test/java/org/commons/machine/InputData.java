@@ -1,8 +1,8 @@
 package org.commons.machine;
 
 import org.commons.ingredients.BeverageComposition;
-import org.commons.ingredients.ConcreteIngredient;
-import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.ConcreteIngredientContainer;
+import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 
@@ -56,32 +56,32 @@ public class InputData {
         return machine.outlets.count_n;
     }
 
-    public Ingredient buildIngredient(IngredientType type) {
+    public IngredientContainer buildIngredientContainer(IngredientType type) {
         Machine.IngredientInfo ingredientInfo = machine.total_items_quantity;
-        ConcreteIngredient concreteIngredient;
+        ConcreteIngredientContainer ingrContainer;
         switch (type) {
-            case WATER:         concreteIngredient = new ConcreteIngredient(IngredientType.WATER, ingredientInfo.hot_water);
-                                return concreteIngredient;
-            case MILK:          concreteIngredient = new ConcreteIngredient(IngredientType.MILK, ingredientInfo.hot_milk);
-                                return concreteIngredient;
-            case GREEN_MIXTURE: concreteIngredient = new ConcreteIngredient(IngredientType.GREEN_MIXTURE,
+            case WATER:         ingrContainer = new ConcreteIngredientContainer(IngredientType.WATER, ingredientInfo.hot_water);
+                                return ingrContainer;
+            case MILK:          ingrContainer = new ConcreteIngredientContainer(IngredientType.MILK, ingredientInfo.hot_milk);
+                                return ingrContainer;
+            case GREEN_MIXTURE: ingrContainer = new ConcreteIngredientContainer(IngredientType.GREEN_MIXTURE,
                                 ingredientInfo.green_mixture);
-                                return concreteIngredient;
-            case TEA_LEAVES_SYRUP:  concreteIngredient = new ConcreteIngredient(IngredientType.TEA_LEAVES_SYRUP,
+                                return ingrContainer;
+            case TEA_LEAVES_SYRUP:  ingrContainer = new ConcreteIngredientContainer(IngredientType.TEA_LEAVES_SYRUP,
                                     ingredientInfo.tea_leaves_syrup);
-                                    return concreteIngredient;
-            case GINGER_SYRUP:  concreteIngredient = new ConcreteIngredient(IngredientType.GINGER_SYRUP,
+                                    return ingrContainer;
+            case GINGER_SYRUP:  ingrContainer = new ConcreteIngredientContainer(IngredientType.GINGER_SYRUP,
                                 ingredientInfo.ginger_syrup);
-                                return concreteIngredient;
-            case ELAICHI_SYRUP: concreteIngredient = new ConcreteIngredient(IngredientType.ELAICHI_SYRUP,
+                                return ingrContainer;
+            case ELAICHI_SYRUP: ingrContainer = new ConcreteIngredientContainer(IngredientType.ELAICHI_SYRUP,
                                 ingredientInfo.elaichi_syrup);
-                                return concreteIngredient;
-            case COFFEE_SYRUP:  concreteIngredient = new ConcreteIngredient(IngredientType.COFFEE_SYRUP,
+                                return ingrContainer;
+            case COFFEE_SYRUP:  ingrContainer = new ConcreteIngredientContainer(IngredientType.COFFEE_SYRUP,
                                 ingredientInfo.coffee_syrup);
-                                return concreteIngredient;
-            case SUGAR_SYRUP:   concreteIngredient = new ConcreteIngredient(IngredientType.SUGAR_SYRUP,
+                                return ingrContainer;
+            case SUGAR_SYRUP:   ingrContainer = new ConcreteIngredientContainer(IngredientType.SUGAR_SYRUP,
                                 ingredientInfo.sugar_syrup);
-                                return concreteIngredient;
+                                return ingrContainer;
 
             default:            throw new IllegalArgumentException("incorrect ingredient type");
         }

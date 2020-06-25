@@ -2,7 +2,7 @@ package org.commons.machine;
 
 import com.google.gson.Gson;
 import org.commons.ingredients.BeverageComposition;
-import org.commons.ingredients.Ingredient;
+import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
@@ -19,7 +19,7 @@ public class HotWaterInputDataTest {
     private String inputFile = getClass().getClassLoader().getResource("input_test.json").getPath();
     private int outlet;
     private BeverageComposition hotwaterRecipe;
-    private Ingredient waterIngr;
+    private IngredientContainer waterContainer;
     private HotWaterMachine hotWaterMachine;
 
 
@@ -29,9 +29,9 @@ public class HotWaterInputDataTest {
         InputData inputData = gson.fromJson(new FileReader(inputFile), InputData.class);
         outlet = inputData.getOutlet();
         hotwaterRecipe = inputData.buildBeverageComposition(BeverageType.HOT_WATER);
-        waterIngr = inputData.buildIngredient(IngredientType.WATER);
+        waterContainer = inputData.buildIngredientContainer(IngredientType.WATER);
         hotWaterMachine = new HotWaterMachine.Builder()
-                .outlet(outlet).beverageComposition(hotwaterRecipe).water(waterIngr).build();
+                .outlet(outlet).beverageComposition(hotwaterRecipe).waterContainer(waterContainer).build();
     }
 
     @Test
@@ -59,7 +59,7 @@ public class HotWaterInputDataTest {
          */
         Assert.assertEquals(true, output!=null);
         Assert.assertEquals(true, !output.isEmpty() && output.contains(BeverageOutputMessage.PREPARED));
-        Assert.assertEquals(450, waterIngr.quantity());
+        Assert.assertEquals(450, waterContainer.quantity());
         Assert.assertEquals(450, hotWaterMachine.ingredientLevel(IngredientType.WATER));
         Assert.assertEquals(true, hotWaterMachine.ingredientsRunningLow().isEmpty());
 

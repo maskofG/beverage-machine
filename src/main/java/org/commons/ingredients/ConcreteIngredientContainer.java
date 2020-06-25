@@ -1,14 +1,14 @@
 package org.commons.ingredients;
 
 import org.commons.machine.BeverageOutputMessage;
-import org.exceptions.RequestQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotPresentException;
 import org.exceptions.RequestedQuantityNotSufficientException;
 
-public class ConcreteIngredient implements Ingredient {
+public class ConcreteIngredientContainer implements IngredientContainer {
     private IngredientType type;
     private int quantity;
 
-    public ConcreteIngredient(IngredientType type, int quantity) {
+    public ConcreteIngredientContainer(IngredientType type, int quantity) {
         if (type == null || quantity < 0)
             throw new IllegalArgumentException("argument is not correct, type=" + type + ", quantity=" + quantity);
         this.type = type;
@@ -27,9 +27,9 @@ public class ConcreteIngredient implements Ingredient {
 
     @Override
     public void check(int amount)
-            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException {
+            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
             if (quantity == 0)
-                throw new RequestQuantityNotPresentException(type.toString() + " " + BeverageOutputMessage.QTY_NA);
+                throw new RequestedQuantityNotPresentException(type.toString() + " " + BeverageOutputMessage.QTY_NA);
             if (quantity < amount)
                 throw new RequestedQuantityNotSufficientException( type.toString() + " " + BeverageOutputMessage.QTY_NS);
     }
@@ -37,7 +37,7 @@ public class ConcreteIngredient implements Ingredient {
 
     @Override
     public void retrieve(int amount)
-            throws RequestQuantityNotPresentException, RequestedQuantityNotSufficientException {
+            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         check(amount);
         quantity -= amount;
     }
