@@ -1,7 +1,7 @@
 # beverage-machine
 Library that implements functionality of beverage machine.
 
-Problem description can be found in [Link](https://github.com/maskofG/beverage-machine/blob/master/archive/README.md)
+Problem description can be found in [Link](archive/README.md)
 
 
 **Structure of the code:**
@@ -34,7 +34,7 @@ ginger tea, elaichi tea, hot coffee.
 
 ![alt text](https://github.com/maskofG/beverage-machine/blob/master/archive/images/ingredient_and_beverage_type.png?raw=true)
 
-#### BeverageComposition:
+#### <div class="text-purple">BeverageComposition:</div>
 This class is the recipe book of a beverage and tells quantity of ingredients needed
 to prepare a particular beverage. So there are will a beverageComposition instance
 for green tea, there can be a different beverage composition for hot coffee, a 
