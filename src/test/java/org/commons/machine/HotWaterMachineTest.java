@@ -13,7 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class HotWaterInputDataTest {
+public class HotWaterMachineTest {
     private Gson gson = new Gson();
     private String inputFile = getClass().getClassLoader().getResource("input_test.json").getPath();
     private int outlet;
@@ -30,7 +30,19 @@ public class HotWaterInputDataTest {
         hotwaterRecipe = inputData.buildBeverageComposition(BeverageType.HOT_WATER);
         waterContainer = inputData.buildIngredientContainer(IngredientType.WATER);
         hotWaterMachine = new HotWaterMachine.Builder()
-                .outlet(outlet).beverageComposition(hotwaterRecipe).waterContainer(waterContainer).build();
+                .outlet(outlet).beverageRecipe(hotwaterRecipe).waterContainer(waterContainer).build();
+    }
+
+    @Test
+    public void testBuilder() {
+        Exception ex = null;
+        try {
+            HotWaterMachine hwm = new HotWaterMachine.Builder().build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
     }
 
     @Test
@@ -118,7 +130,6 @@ public class HotWaterInputDataTest {
         /**
          * check if exception is throw if we refill negative value of water
          */
-
         try {
             hotWaterMachine.refillIngredient(IngredientType.WATER, -50);
         } catch (IncorrectIngredientTypeException | IllegalArgumentException e) {
@@ -127,6 +138,20 @@ public class HotWaterInputDataTest {
 
         Assert.assertEquals(true, ex != null);
         Assert.assertEquals(550, hotWaterMachine.ingredientLevel(IngredientType.WATER));
+
+        /**
+         * check if exception is throw if we refill type = MILK  value of water
+         */
+        try {
+            ex = null;
+            hotWaterMachine.refillIngredient(IngredientType.MILK, 50);
+        } catch (IncorrectIngredientTypeException | IllegalArgumentException e) {
+            ex = e;
+        }
+
+        Assert.assertEquals(true, ex != null);
+        Assert.assertEquals(550, hotWaterMachine.ingredientLevel(IngredientType.WATER));
+
 
         hotWaterMachine.dispense(BeverageType.HOT_WATER);
     }

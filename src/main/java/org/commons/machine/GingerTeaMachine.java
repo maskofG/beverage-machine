@@ -256,7 +256,7 @@ public class GingerTeaMachine extends BaseBeverageMachine {
             return this;
         }
 
-        public Builder addIngredient(IngredientContainer container) {
+        public Builder addIngredientContainer(IngredientContainer container) {
             switch(container.type()) {
                 case WATER:             waterContainer = container;
                                         this.ingredientContainer.put(IngredientType.WATER, container);
@@ -279,8 +279,8 @@ public class GingerTeaMachine extends BaseBeverageMachine {
             return this;
         }
 
-        public Builder addRecipe(BeverageComposition beverageComposition) {
-            this.beverageRecipe = beverageComposition;
+        public Builder addRecipe(BeverageComposition beverageRecipe) {
+            this.beverageRecipe = beverageRecipe;
             return this;
         }
 

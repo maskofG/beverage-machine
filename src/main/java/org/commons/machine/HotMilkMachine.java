@@ -135,7 +135,7 @@ public class HotMilkMachine extends BaseBeverageMachine {
      * multiple compulsory fields in the constructor.
      */
     public static class Builder {
-        private BeverageComposition beverageComposition;
+        private BeverageComposition beverageRecipe;
         private IngredientContainer milkContainer;
         private int outlet;
 
@@ -149,19 +149,19 @@ public class HotMilkMachine extends BaseBeverageMachine {
             return this;
         }
 
-        public Builder beverageComposition(BeverageComposition beverageComposition){
-            this.beverageComposition = beverageComposition;
+        public Builder beverageRecipe(BeverageComposition beverageRecipe){
+            this.beverageRecipe = beverageRecipe;
             return this;
         }
 
         public HotMilkMachine build(){
-            if (milkContainer == null || beverageComposition == null)
+            if (milkContainer == null || beverageRecipe == null)
                 throw new IllegalArgumentException("argument for " + HotMilkMachine.class.getSimpleName() +
                         " construction is not correct.");
 
             HotMilkMachine hotMilkMachine = new HotMilkMachine(outlet);
             hotMilkMachine.milkContainer = milkContainer;
-            hotMilkMachine.beverageRecipe = beverageComposition;
+            hotMilkMachine.beverageRecipe = beverageRecipe;
             return hotMilkMachine;
         }
     }

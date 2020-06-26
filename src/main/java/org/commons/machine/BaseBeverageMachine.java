@@ -33,10 +33,11 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
     private Semaphore semaphore;
 
     public BaseBeverageMachine(int outlet) {
-        if (outlet <= 0)
+        if (outlet <= 0) {
             throw new IllegalArgumentException("number of outlets cannot be negative or zero in beverage machine");
+        }
 
-        semaphore = new Semaphore(outlet);
+        semaphore = new Semaphore(outlet, true);
     }
 
     /**

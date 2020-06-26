@@ -241,19 +241,19 @@ public class CoffeeMachine extends BaseBeverageMachine {
             return this;
         }
 
-        public Builder addIngredient(IngredientContainer ingredientContainer) {
-            switch(ingredientContainer.type()) {
-                case WATER:         water = ingredientContainer;
-                                    this.ingredientContainer.put(IngredientType.WATER, ingredientContainer);
+        public Builder addIngredientContainer(IngredientContainer container) {
+            switch(container.type()) {
+                case WATER:         water = container;
+                                    this.ingredientContainer.put(IngredientType.WATER, container);
                                     break;
-                case MILK:          milk = ingredientContainer;
-                                    this.ingredientContainer.put(IngredientType.MILK, ingredientContainer);
+                case MILK:          milk = container;
+                                    this.ingredientContainer.put(IngredientType.MILK, container);
                                     break;
-                case COFFEE_SYRUP:  coffeeSyrup = ingredientContainer;
-                                    this.ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, ingredientContainer);
+                case COFFEE_SYRUP:  coffeeSyrup = container;
+                                    this.ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, container);
                                     break;
-                case SUGAR_SYRUP:   sugarSyrup = ingredientContainer;
-                                    this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredientContainer);
+                case SUGAR_SYRUP:   sugarSyrup = container;
+                                    this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, container);
                                     break;
                 default:            throw new IllegalArgumentException("cannot accept ingredient other than " +
                                     "[coffee_syrup,sugar_syrup]");
@@ -261,8 +261,8 @@ public class CoffeeMachine extends BaseBeverageMachine {
             return this;
         }
 
-        public Builder addRecipe(BeverageComposition beverageComposition) {
-            this.beverageRecipe = beverageComposition;
+        public Builder addRecipe(BeverageComposition beverageRecipe) {
+            this.beverageRecipe = beverageRecipe;
             return this;
         }
 
