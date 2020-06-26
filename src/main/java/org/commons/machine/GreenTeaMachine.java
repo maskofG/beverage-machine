@@ -17,6 +17,12 @@ import java.util.Map;
  *  Green tea beverage machine which brews cups of green tea paralelly for
  *  outlet number of people
  *  Its works on water,green mixture,ginger syrup,sugar syrup as its ingredient.
+ *
+ *   Green tea machine = Noutlet Base beverage machine +
+ *                       green tea brewing module +
+ *                       pluggable ingredient container for water,
+ *                       green_mixture,ginger syrup,sugar syrup.
+ *
  */
 public class GreenTeaMachine extends BaseBeverageMachine {
     /**
@@ -56,7 +62,7 @@ public class GreenTeaMachine extends BaseBeverageMachine {
      * @throws BeverageTypeNotSupportedException
      */
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type) throws RequestedQuantityNotPresentException,
+    public synchronized void brew(BeverageType type) throws RequestedQuantityNotPresentException,
             RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
         if (type == null || type != BeverageType.GREEN_TEA )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " +
@@ -150,7 +156,8 @@ public class GreenTeaMachine extends BaseBeverageMachine {
      * @throws IncorrectIngredientTypeException
      */
     @Override
-    public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
+    public synchronized void refillIngredient(IngredientType type, int amount)
+            throws IncorrectIngredientTypeException {
         switch (type) {
             case WATER:         ingredientContainer.get(IngredientType.WATER).refill(amount);
                                 break;
@@ -199,7 +206,7 @@ public class GreenTeaMachine extends BaseBeverageMachine {
     }
 
     /**
-     * Builder pattern to build Hot milk machine to abstract out
+     * Builder pattern to build Green tea machine to abstract out
      * multiple compulsory fields in the constructor.
      */
     public static class Builder {

@@ -15,6 +15,11 @@ import java.util.List;
  *  Hot milk beverage machine which brews cups of hot milk paralelly for
  *  outlet number of people
  *  Its works on milk as its ingredient.
+ *
+ *   Hot milk machine = Noutlet Base beverage machine +
+ *                      hot milk brewing module +
+ *                      pluggable ingredient container for milk.
+ *
  */
 public class HotMilkMachine extends BaseBeverageMachine {
     /**
@@ -50,7 +55,7 @@ public class HotMilkMachine extends BaseBeverageMachine {
      * @throws BeverageTypeNotSupportedException
      */
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type)
+    public synchronized void brew(BeverageType type)
             throws RequestedQuantityNotPresentException,
             RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
         if (type == null || type != BeverageType.HOT_MILK )

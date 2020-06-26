@@ -13,6 +13,11 @@ import java.util.List;
  * outlet number of people
  * Its works on water as its ingredient.
  *
+ *   Hot water machine = Noutlet Base beverage machine +
+ *                         hot water brewing module +
+ *                         pluggable ingredient container for water.
+ *
+ *
  */
 public class HotWaterMachine extends BaseBeverageMachine {
     /**
@@ -46,7 +51,7 @@ public class HotWaterMachine extends BaseBeverageMachine {
      * @throws BeverageTypeNotSupportedException
      */
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type) throws RequestedQuantityNotPresentException,
+    public synchronized void brew(BeverageType type) throws RequestedQuantityNotPresentException,
             RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
         if (type == null || type != BeverageType.HOT_WATER )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " + BeverageOutputMessage.NOT_SUPPORTED

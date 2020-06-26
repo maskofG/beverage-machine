@@ -17,18 +17,53 @@ import java.util.Map;
  *  Ginger tea beverage machine which brews cups of ginger tea paralelly for
  *  outlet number of people
  *  Its works on water,milk,tea leaves syrup,ginger syrup, sugar syrup as its ingredient.
+ *
+ *   Ginger tea machine = Noutlet Base beverage machine +
+ *                         ginger tea brewing module +
+ *                         pluggable ingredient container for water,milk,
+ *                         tea leaves syrup,ginger syrup and sugar syrup.
+ *
  */
 public class GingerTeaMachine extends BaseBeverageMachine {
 
+    /**
+     * recipe for the beverage. It has quantity for each of
+     * the ginger tea ingredients i.e water,milk,tea leaves
+     * syrup,ginger syrup,sugar syrup
+     *
+     */
     private BeverageComposition beverageRecipe;
+
+    /**
+     * container for storing ingredients of ginger tea -
+     * water,milk,tea leaves syrup,ginger syrup,sugar syrup
+     */
     private Map<IngredientType, IngredientContainer> ingredientContainer;
 
+    /**
+     * number of outlets of the ginger tea beverage machine
+     * @param outlet
+     */
     private GingerTeaMachine(int outlet) {
         super(outlet);
     }
 
+    /**
+     *  retrieve ingredients for ginger tea.
+     *  if type is null or not ginger tea then it throws
+     *  @{@link BeverageTypeNotSupportedException}
+     *  method is thread-safe and consistency is maintained while retrieving
+     *  ingredients parallely for different request.
+     *
+     * @param type can be one of the @{@link BeverageType}.
+     *             But it only supports GINGER_TEA and throws exception
+     *             on any other value of type.
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     * @throws BeverageTypeNotSupportedException
+     */
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
+    public synchronized void brew(BeverageType type) throws BeverageTypeNotSupportedException,
             RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         if (type == null || type != BeverageType.GINGER_TEA )
             throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " +
@@ -47,8 +82,19 @@ public class GingerTeaMachine extends BaseBeverageMachine {
                 .retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
     }
 
+    /**
+     *  check availability of the ingredient in the container,
+     *  generally checked before retrieving the ingredients.
+     *  And if any of the ingredient is not present or is not insufficient,
+     *  it throws either of the two exceptions.
+     * if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
+     * if quantity < required amount, then it throws @{@link RequestedQuantityNotSufficientException}
+     *
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     */
     private void checkAvailability()
-            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
+            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         checkHotWater();
         checkHotMilk();
         ingredientContainer.get(IngredientType.TEA_LEAVES_SYRUP)
@@ -59,28 +105,56 @@ public class GingerTeaMachine extends BaseBeverageMachine {
                 .check(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
     }
 
+    /**
+     *  check availability of water in the container, generally checked while checking other ingredients.
+     *  And if it is not present or is not insufficient, it throws either
+     *  of the two exceptions.
+     *  if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
+     *  if quantity < required amount, then it throws @{@link RequestedQuantityNotSufficientException}
+     *
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     */
     private void checkHotWater()
             throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));
         } catch (RequestedQuantityNotPresentException rqnpe) {
-            throw new RequestedQuantityNotPresentException("hot_water is not available");
+            throw new RequestedQuantityNotPresentException("hot_water is " + BeverageOutputMessage.QTY_NA);
         } catch (RequestedQuantityNotSufficientException e) {
-            throw new RequestedQuantityNotSufficientException("hot_water is not sufficient");
+            throw new RequestedQuantityNotSufficientException("hot_water is " + BeverageOutputMessage.QTY_NS);
         }
     }
 
+    /**
+     *  check availability of milk in the container, generally checked while checking other ingredients.
+     *  And if it is not present or is not insufficient, it throws either
+     * of the two exceptions.
+     * if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
+     * if quantity < required amount, then it throws @{@link RequestedQuantityNotSufficientException}
+     *
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     */
     private void checkHotMilk()
-            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException, BeverageTypeNotSupportedException {
+            throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.MILK).check(beverageRecipe.getQuantity(IngredientType.MILK));
         } catch (RequestedQuantityNotPresentException rqnpe) {
-            throw new RequestedQuantityNotPresentException("hot_milk is not available");
+            throw new RequestedQuantityNotPresentException("hot_milk is " + BeverageOutputMessage.QTY_NA);
         } catch (RequestedQuantityNotSufficientException e) {
-            throw new RequestedQuantityNotSufficientException("hot_milk is not sufficient");
+            throw new RequestedQuantityNotSufficientException("hot_milk is " + BeverageOutputMessage.QTY_NS);
         }
     }
 
+    /**
+     * returns the quantity of the ingredient in the ingredient container
+     *
+     * @param type it is one of the @{@link IngredientType}.
+     * @return  it will return 0 if quantity is other than core ingredient
+     *          it needs to prepare green tea else it will return the quantity
+     *          of the specified ingredient in the ingredient container
+     */
     @Override
     public int ingredientLevel(IngredientType type) {
         int level = 0;
@@ -99,8 +173,18 @@ public class GingerTeaMachine extends BaseBeverageMachine {
         return level;
     }
 
+    /**
+     * Refill of the supported ingredient type in the ingredient container
+     *
+     * @param type it is one of @{@link IngredientType}.
+     *             if the ingredient type is other than the core ingredients
+     *             it need then @{@link IncorrectIngredientTypeException} is thrown
+     * @param amount quantity of the ingredient being refilled
+     * @throws IncorrectIngredientTypeException
+     */
     @Override
-    public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
+    public synchronized void refillIngredient(IngredientType type, int amount)
+            throws IncorrectIngredientTypeException {
         switch (type) {
             case WATER:             ingredientContainer.get(IngredientType.WATER).refill(amount);
                                     break;
@@ -112,11 +196,21 @@ public class GingerTeaMachine extends BaseBeverageMachine {
                                     break;
             case SUGAR_SYRUP:       ingredientContainer.get(IngredientType.SUGAR_SYRUP).refill(amount);
                                     break;
-            default:                throw new IncorrectIngredientTypeException("Refilling of Ingredient Type=" + type +
-                                    " is not supported in " + getClass().getSimpleName());
+            default:                throw new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
+                                    BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
         }
     }
 
+    /**
+     * List ingredients running low in the ingredient container.
+     * It can be either of the core ingredients which is required
+     * in preparing the beverage and is running low on quantity.
+     * Running low is defined as the quantity which is not sufficient
+     * to prepare a beverage.
+     *
+     * @return list of ingredients running low in the ingredient
+     *          container
+     */
     @Override
     public List<IngredientType> ingredientsRunningLow() {
         List<IngredientType> ingredientTypeList = new ArrayList<>();
@@ -144,37 +238,41 @@ public class GingerTeaMachine extends BaseBeverageMachine {
         return ingredientTypeList;
     }
 
+    /**
+     * Builder pattern to build Ginger tea machine to abstract out
+     * multiple compulsory fields in the constructor.
+     */
     public static class Builder {
         private int outlet;
         private Map<IngredientType, IngredientContainer> ingredientContainer = new HashMap<>();
         private BeverageComposition beverageRecipe;
-        private IngredientContainer water;
-        private IngredientContainer milk;
-        private IngredientContainer teaLeavesSyrup;
-        private IngredientContainer gingerSyrup;
-        private IngredientContainer sugarSyrup;
+        private IngredientContainer waterContainer;
+        private IngredientContainer milkContainer;
+        private IngredientContainer teaLeavesSyrupContainer;
+        private IngredientContainer gingerSyrupContainer;
+        private IngredientContainer sugarSyrupContainer;
 
         public Builder outlet(int outlet) {
             this.outlet = outlet;
             return this;
         }
 
-        public Builder addIngredient(IngredientContainer ingredientContainer) {
-            switch(ingredientContainer.type()) {
-                case WATER:             water = ingredientContainer;
-                                        this.ingredientContainer.put(IngredientType.WATER, ingredientContainer);
+        public Builder addIngredient(IngredientContainer container) {
+            switch(container.type()) {
+                case WATER:             waterContainer = container;
+                                        this.ingredientContainer.put(IngredientType.WATER, container);
                                         break;
-                case MILK:              milk = ingredientContainer;
-                                        this.ingredientContainer.put(IngredientType.MILK, ingredientContainer);
+                case MILK:              milkContainer = container;
+                                        this.ingredientContainer.put(IngredientType.MILK, container);
                                         break;
-                case TEA_LEAVES_SYRUP:  teaLeavesSyrup = ingredientContainer;
-                                        this.ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, ingredientContainer);
+                case TEA_LEAVES_SYRUP:  teaLeavesSyrupContainer = container;
+                                        this.ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, container);
                                         break;
-                case GINGER_SYRUP:      gingerSyrup = ingredientContainer;
-                                        this.ingredientContainer.put(IngredientType.GINGER_SYRUP, ingredientContainer);
+                case GINGER_SYRUP:      gingerSyrupContainer = container;
+                                        this.ingredientContainer.put(IngredientType.GINGER_SYRUP, container);
                                         break;
-                case SUGAR_SYRUP:       sugarSyrup = ingredientContainer;
-                                        this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, ingredientContainer);
+                case SUGAR_SYRUP:       sugarSyrupContainer = container;
+                                        this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, container);
                                         break;
                 default:                throw new IllegalArgumentException("cannot accept ingredient other than " +
                                         "[tea_leaves_syrup,ginger_syrup,sugar_syrup]");
@@ -188,8 +286,8 @@ public class GingerTeaMachine extends BaseBeverageMachine {
         }
 
         public GingerTeaMachine build(){
-            if (beverageRecipe == null || water == null || milk == null ||
-                    teaLeavesSyrup == null || gingerSyrup == null || sugarSyrup == null)
+            if (beverageRecipe == null || waterContainer == null || milkContainer == null ||
+                    teaLeavesSyrupContainer == null || gingerSyrupContainer == null || sugarSyrupContainer == null)
                 throw new IllegalArgumentException("argument for " + GingerTeaMachine.class.getSimpleName() +
                         " construction is not correct.");
 

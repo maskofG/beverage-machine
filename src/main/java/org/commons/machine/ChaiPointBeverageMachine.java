@@ -7,6 +7,38 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ *  Chai point beverage machine which brews cups of -
+ *      1. hot water
+ *      2. hot milk
+ *      3. green tea
+ *      4. ginger tea
+ *      5. elaichi tea
+ *      6. hot coffee
+ *  paralelly for outlet number of people
+ *  Its works on following ingredient -
+ *      1. water
+ *      2. milk
+ *      3. green mixture
+ *      4. tea leaves syrup
+ *      5. ginger syrup
+ *      6. elaichi syrup
+ *      7. coffee syrup
+ *      8. sugar syrup
+ *
+ *  CoffeeMachine = hot water brewing module +
+ *                  hot milk brewing module +
+ *                  green tea brewing module +
+ *                  ginger tea brewing module +
+ *                  elaichi tea brewing module +
+ *                  hot coffee brewing module
+ *                  coffee brewing module +
+ *                  pluggable ingredient container
+ *                  for water,milk,green mixture,
+ *                  leaves syrup,ginger syrup,
+ *                  elaichi syrup, coffee syrup and sugar syrup.
+ *
+ */
 public class ChaiPointBeverageMachine extends BaseBeverageMachine {
 
     private HotWaterMachine hotWaterMachine;
@@ -21,23 +53,23 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
     }
 
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
+    public synchronized void brew(BeverageType type) throws BeverageTypeNotSupportedException,
             RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         switch (type) {
-            case HOT_WATER:     hotWaterMachine.retrieveBeverageItems(BeverageType.HOT_WATER);
+            case HOT_WATER:     hotWaterMachine.brew(BeverageType.HOT_WATER);
                                 break;
-            case HOT_MILK:      hotMilkMachine.retrieveBeverageItems(BeverageType.HOT_MILK);
+            case HOT_MILK:      hotMilkMachine.brew(BeverageType.HOT_MILK);
                                 break;
-            case GREEN_TEA:     greenTeaMachine.retrieveBeverageItems(BeverageType.GREEN_TEA);
+            case GREEN_TEA:     greenTeaMachine.brew(BeverageType.GREEN_TEA);
                                 break;
-            case GINGER_TEA:    gingerTeaMachine.retrieveBeverageItems(BeverageType.GINGER_TEA);
+            case GINGER_TEA:    gingerTeaMachine.brew(BeverageType.GINGER_TEA);
                                 break;
-            case ELAICHI_TEA:   elaichiTeaMachine.retrieveBeverageItems(BeverageType.ELAICHI_TEA);
+            case ELAICHI_TEA:   elaichiTeaMachine.brew(BeverageType.ELAICHI_TEA);
                                 break;
-            case HOT_COFFEE:    coffeeMachine.retrieveBeverageItems(BeverageType.HOT_COFFEE);
+            case HOT_COFFEE:    coffeeMachine.brew(BeverageType.HOT_COFFEE);
                                 break;
-            default:            throw new BeverageTypeNotSupportedException("BeverageType=" + type +
-                                " is not supported in" + this.getClass().getSimpleName());
+            default:            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " +
+                                BeverageOutputMessage.NOT_SUPPORTED + " in " + this.getClass().getSimpleName());
         }
     }
 

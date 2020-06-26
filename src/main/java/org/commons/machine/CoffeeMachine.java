@@ -13,35 +13,85 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  Hot coffee beverage machine which brews cups of hot coffee paralelly for
+ *  outlet number of people
+ *  Its works on water,milk,coffee syrup,sugar syrup as its ingredient.
+ *
+ *  CoffeeMachine = Noutlet Base beverage machine +
+ *                  coffee brewing module +
+ *                  pluggable ingredient container
+ *                  for water,milk,coffee syrup and sugar syrup.
+ *
+ */
 public class CoffeeMachine extends BaseBeverageMachine {
+
+    /**
+     * recipe for the beverage. It has quantity for each of
+     * the ginger tea ingredients i.e water,milk,coffee syrup,sugar syrup
+     *
+     */
     private BeverageComposition beverageRecipe;
+
+    /**
+     * container for storing ingredients of hot coffee -
+     * water,milk,coffee syrup, sugar syrup
+     */
     private Map<IngredientType, IngredientContainer> ingredientContainer;
 
+    /**
+     * number of outlets of the hot coffee beverage machine
+     * @param outlet
+     */
     private CoffeeMachine(int outlet) {
         super(outlet);
     }
 
+    /**
+     *  retrieve ingredients for hot coffee.
+     *  if type is null or not HOT_COFFEE then it throws
+     *  @{@link BeverageTypeNotSupportedException}
+     *  method is thread-safe and consistency is maintained while retrieving
+     *  ingredients parallely for different request.
+     *
+     * @param type can be one of the @{@link BeverageType}.
+     *             But it only supports HOT_COFFEE and throws exception
+     *             on any other value of type.
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     * @throws BeverageTypeNotSupportedException
+     */
     @Override
-    public synchronized void retrieveBeverageItems(BeverageType type) throws BeverageTypeNotSupportedException,
+    public synchronized void brew(BeverageType type) throws BeverageTypeNotSupportedException,
             RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
         if (type == null || type != BeverageType.HOT_COFFEE )
-            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
-                    this.getClass().getSimpleName() +" machine.");
+            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " +
+                    BeverageOutputMessage.NOT_SUPPORTED + " in " + this.getClass().getSimpleName());
 
-        checkAvailability(type);
-        ingredientContainer.get(IngredientType.WATER).retrieve(beverageRecipe.getQuantity(IngredientType.WATER));
-        ingredientContainer.get(IngredientType.MILK).retrieve(beverageRecipe.getQuantity(IngredientType.MILK));
-        ingredientContainer.get(IngredientType.COFFEE_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.COFFEE_SYRUP));
-        ingredientContainer.get(IngredientType.SUGAR_SYRUP).retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
+        checkAvailability();
+        ingredientContainer.get(IngredientType.WATER)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.WATER));
+        ingredientContainer.get(IngredientType.MILK)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.MILK));
+        ingredientContainer.get(IngredientType.COFFEE_SYRUP)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.COFFEE_SYRUP));
+        ingredientContainer.get(IngredientType.SUGAR_SYRUP)
+                .retrieve(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
     }
 
-
-    private void checkAvailability(BeverageType type)
-            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException, BeverageTypeNotSupportedException {
-        if (type == null || type != BeverageType.HOT_COFFEE )
-            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " is not supported in " +
-                    this.getClass().getSimpleName() +" machine.");
-
+    /**
+     *  check availability of the ingredient in the container,
+     *  generally checked before retrieving the ingredients.
+     *  And if any of the ingredient is not present or is not insufficient,
+     *  it throws either of the two exceptions.
+     * if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
+     * if quantity < required amount, then it throws @{@link RequestedQuantityNotSufficientException}
+     *
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     */
+    private void checkAvailability()
+            throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException{
         checkHotWater();
         checkHotMilk();
         ingredientContainer.get(IngredientType.COFFEE_SYRUP)
@@ -50,28 +100,56 @@ public class CoffeeMachine extends BaseBeverageMachine {
                 .check(beverageRecipe.getQuantity(IngredientType.SUGAR_SYRUP));
     }
 
+    /**
+     *  check availability of water in the container, generally checked while checking other ingredients.
+     *  And if it is not present or is not insufficient, it throws either
+     *  of the two exceptions.
+     *  if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
+     *  if quantity < required amount, then it throws @{@link RequestedQuantityNotSufficientException}
+     *
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     */
     private void checkHotWater()
             throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.WATER).check(beverageRecipe.getQuantity(IngredientType.WATER));
         } catch (RequestedQuantityNotPresentException rqnpe) {
-            throw new RequestedQuantityNotPresentException("hot_water is not available");
+            throw new RequestedQuantityNotPresentException("hot_water is " + BeverageOutputMessage.QTY_NA);
         } catch (RequestedQuantityNotSufficientException e) {
-            throw new RequestedQuantityNotSufficientException("hot_water is not sufficient");
+            throw new RequestedQuantityNotSufficientException("hot_water is " + BeverageOutputMessage.QTY_NS);
         }
     }
 
+    /**
+     *  check availability of milk in the container, generally checked while checking other ingredients.
+     *  And if it is not present or is not insufficient, it throws either
+     * of the two exceptions.
+     * if quantity = 0, then it throws @{@link RequestedQuantityNotPresentException}
+     * if quantity < required amount, then it throws @{@link RequestedQuantityNotSufficientException}
+     *
+     * @throws RequestedQuantityNotPresentException
+     * @throws RequestedQuantityNotSufficientException
+     */
     private void checkHotMilk()
             throws RequestedQuantityNotSufficientException, RequestedQuantityNotPresentException {
         try {
             ingredientContainer.get(IngredientType.MILK).check(beverageRecipe.getQuantity(IngredientType.MILK));
         } catch (RequestedQuantityNotPresentException rqnpe) {
-            throw new RequestedQuantityNotPresentException("hot_milk is not available");
+            throw new RequestedQuantityNotPresentException("hot_milk is " + BeverageOutputMessage.QTY_NA);
         } catch (RequestedQuantityNotSufficientException e) {
-            throw new RequestedQuantityNotSufficientException("hot_milk is not sufficient");
+            throw new RequestedQuantityNotSufficientException("hot_milk is " + BeverageOutputMessage.QTY_NS);
         }
     }
 
+    /**
+     * returns the quantity of the ingredient in the ingredient container
+     *
+     * @param type it is one of the @{@link IngredientType}.
+     * @return  it will return 0 if quantity is other than core ingredient
+     *          it needs to prepare hot coffee else it will return the quantity
+     *          of the specified ingredient in the ingredient container
+     */
     @Override
     public int ingredientLevel(IngredientType type) {
         int level = 0;
@@ -88,6 +166,15 @@ public class CoffeeMachine extends BaseBeverageMachine {
         return level;
     }
 
+    /**
+     * Refill of the supported ingredient type in the ingredient container
+     *
+     * @param type it is one of @{@link IngredientType}.
+     *             if the ingredient type is other than the core ingredients
+     *             it need then @{@link IncorrectIngredientTypeException} is thrown
+     * @param amount quantity of the ingredient being refilled
+     * @throws IncorrectIngredientTypeException
+     */
     @Override
     public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
         switch (type) {
@@ -99,11 +186,21 @@ public class CoffeeMachine extends BaseBeverageMachine {
                                 break;
             case SUGAR_SYRUP:   ingredientContainer.get(IngredientType.SUGAR_SYRUP).refill(amount);
                                 break;
-            default:            throw new IncorrectIngredientTypeException("Refilling of Ingredient Type=" + type +
-                                " is not supported in " + getClass().getSimpleName());
+            default:            throw new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
+                                BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
         }
     }
 
+    /**
+     * List ingredients running low in the ingredient container.
+     * It can be either of the core ingredients which is required
+     * in preparing the beverage and is running low on quantity.
+     * Running low is defined as the quantity which is not sufficient
+     * to prepare a beverage.
+     *
+     * @return list of ingredients running low in the ingredient
+     *          container
+     */
     @Override
     public List<IngredientType> ingredientsRunningLow() {
         List<IngredientType> ingredientTypeList = new ArrayList<>();
@@ -127,6 +224,10 @@ public class CoffeeMachine extends BaseBeverageMachine {
         return ingredientTypeList;
     }
 
+    /**
+     * Builder pattern to build hot coffee machine to abstract out
+     * multiple compulsory fields in the constructor.
+     */
     public static class Builder {
         private int outlet;
         private Map<IngredientType, IngredientContainer> ingredientContainer = new HashMap<>();

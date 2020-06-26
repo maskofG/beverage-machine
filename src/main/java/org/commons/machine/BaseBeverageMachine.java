@@ -7,13 +7,25 @@ import org.exceptions.RequestedQuantityNotSufficientException;
 import java.util.concurrent.Semaphore;
 
 /**
- * Base Beverage Machine class which implements the functionality
- * of allowing brewing of beverage by "N" people in parallel. Any more
- * than N people will to wait until one spot is empty for brewing coffee.
  *
- * Class that inherits this class decides which beverages it wants to serve
- * and how it wants to implement thread-safety in case of parallel execution
- * of "N" simulataneous request by implementing retrieveBeverageItems(BeverageType)
+ * Base beverage machine = Bare metal beverage machine +
+ *                         Noutlet beverage dispensing module +
+ *                         plugs for connecting brewing setup
+ *                         for different beverages
+ *
+ * Brewing setup can be plugged with multiple pluggable
+ * ingredients container.
+ *
+ * So this bare metal Beverage Machine class implements the functionality
+ * of allowing parallel dispensing of beverage for "N" people. Any more
+ * than N people will have to wait until one spot is empty for dispensing
+ * beverage.
+ *
+ * concrete class can inherit this class to implement their brewing module/setup
+ * and this brewing module can be plugged with multiple ingredients container
+ * depending on type of beverage we want to brew.
+ * The concrete will brew a beverage and serve beverage to N people in
+ * parallel.
  *
  */
 public abstract class BaseBeverageMachine implements BeverageMachine{
@@ -42,7 +54,7 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
         try {
             semaphore.acquire();
             dispenserResult.append(type.name());
-            retrieveBeverageItems(type);
+            brew(type);
             dispenserResult.append(" ").append(BeverageOutputMessage.PREPARED);
         }catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException rqnpe){
             dispenserResult.append(" ").append(BeverageOutputMessage.NOT_PREPARED).append(" ")
@@ -60,7 +72,8 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
     }
 
     /**
-     * Retrieve ingredient which is needed to prepare asked beverage type.
+     * Retrieve ingredient and brew ingredients (No exactly brewing as of now) which is
+     * needed to prepare asked beverage type.
      * If a machine doesnot support requested beverage type it can throw
      * @{@link BeverageTypeNotSupportedException}
      * if while retrieving if the machine finds it cannot prepare the beverage because one of
@@ -73,7 +86,7 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
      * @throws RequestedQuantityNotPresentException
      * @throws RequestedQuantityNotSufficientException
      */
-    public abstract void retrieveBeverageItems(BeverageType type)
+    public abstract void brew(BeverageType type)
             throws BeverageTypeNotSupportedException, RequestedQuantityNotPresentException,
             RequestedQuantityNotSufficientException;
 
