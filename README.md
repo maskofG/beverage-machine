@@ -3,122 +3,151 @@ Library that implements functionality of beverage machine.
 
 Problem description can be found in [Link](archive/README.md)
 
+**Design philosophy:**
+
+Build pluggable modules for maximum reuse and extensibility of code.
+
+1. Build N outlet dispensing module with bare metal beverage machine. This
+machine only has connection point for pluggable brewing machines.
+2. Build brewing machines which has connection point pluggable ingredient
+containers.
+3. Build pluggable ingredient containers.
+4. Interconnect N outlet dispensing machine with brewing machine and connect 
+the brewing machine with ingredient containers to build a beverage brewing 
+machine.
+5. Build custom brewing machine with more more than one brewing module by
+interconnecting N outlet dispensing machine with mutliple brewing machine
+and connect these brewing machines with a set of required ingredient containers
+to dispense multiple beverages to N people paralelly.
+
+For example:
+```
+1. Hot water machine = N outlet module + 
+                       hot water brewing machine + 
+                       water container
+2. Hot milk machine = N outlet module + 
+                      hot milk brewing machine + 
+                      milk container
+3. Green tea machine = N outlet module + 
+                        green tea brewing machine + 
+                        water container +
+                        green mixture container + 
+                        ginger syrup container + 
+                        sugar syrup container
+4. Ginger tea machine = N outlet module + 
+                        ginger tea brewing machine + 
+                        water container +
+                        milk container + 
+                        tea leaves syrup container + 
+                        ginger syrup container +
+                        sugar syrup container;
+5. Elaichi tea machine = N outlet module + 
+                         elaichi tea brewing machine + 
+                         water container +
+                         milk container + 
+                         tea leaves syrup container + 
+                         elaichi syrup container +
+                         sugar syrup container;
+6. Hot coffee machine = N outlet module + 
+                        hot cofee brewing machine + 
+                        water container +
+                        milk container + 
+                        coffe container +
+                        sugar syrup container;
+7. Chai point machine =  N outlet module + 
+                      hot water brewing machine +
+                      hot milk brewing machine +
+                      green tea brewing machine +
+                      ginger tea brewing machine +
+                      elaichi tea brewing machine +
+                      hot coffee brewing machine + 
+                      water container +
+                      milk container +
+                      green mixture container +
+                      tea leaves syrup container +
+                      ginger syrup container +
+                      elaichi syrup container +
+                      coffee syrup container +
+                      sugar syrup container;
+```
 
 **Structure of the code:**
 
-With code reuse as my primary motive, I started with Beverage Machine interface,
-which lays out the functionality of any beverage machine, alongwith an abstract
-BaseBeverageMachine class which implements N outlet beverage machine, leaving the
-feature of beverage preparation method for concrete beverage machine class. 
+With code modularity and its reuse and extensibility in mind, I built the complete 
+system in the form of inter pluggable component. First step started with
+the drawing of sketch of the functionality offered by a beverage machine and 
+that became the part of beverage machine interface - 
+[BeverageMachine](src/main/java/org/commons/machine/BeverageMachine.java).
+ 
+Using this the first module was brought into existence which had N outlets 
+with bare metal feature of a pluggable beverage machine - 
+[BaseBeverageMachine](src/main/java/org/commons/machine/BaseBeverageMachine.java) 
 
-Using BaseBeverageMachine, I created basic-beverage machine, which can be used to
-build any custom beverage machine. The basic beverage machines built are:
 
-- HotWaterMachine
-- HotMilkMachine
-- GreenTeaMachine
-- GingerTeaMachine
-- ElaichiTeaMachine
-- CoffeMachine
+Then we finalized on functionality of an pluggable ingredient container by building
+an interface - 
+[IngredientContainer](src/main/java/org/commons/ingredients/IngredientContainer.java).
+Then we built [ConcreteIngredientContainer](src/main/java/org/commons/ingredients/ConcreteIngredientContainer.java)
+on the interface to provide a common container for all ingredients.
 
-Using the above mentioned rudimentary core beverage machine, we can build any machine
-which can any combination beverages - hot water, hot milk, green tea, ginger tea,
-elaichi tea, hot coffe.
+Then we build core concrete brewing machines using N-outlet bare metal beverage
+machine multiple ingredient containers as per need.
+For example -
+1. [HotWaterMachine](src/main/java/org/commons/machine/HotWaterMachine.java)
+2. [HotMilkMachine](src/main/java/org/commons/machine/HotMilkMachine.java)
+3. [GreenTeaMachine](src/main/java/org/commons/machine/GreenTeaMachine.java)
+4. [GingerTeaMachine](src/main/java/org/commons/machine/GingerTeaMachine.java)
+5. [ElaichiTeaMachine](src/main/java/org/commons/machine/ElaichiTeaMachine.java)
+6. [CoffeMachine](src/main/java/org/commons/machine/CoffeeMachine.java)
 
-Hence I reused these core machine components to build a multi-functionality beverage
-machine - "chai point machine" which serves - hot water, hot milk, green tea,
-ginger tea, elaichi tea, hot coffee.
+Now we build a custom beverage machine, "Chai point Machine", which serves -
+1. hot water
+2. hot milk
+3. green tea
+4. ginger tea
+5. elaichi tea
+6. hot coffee
+
+Since we have already built systems which serves us all the above beverages 
+separately. So we will inject brewing modules of  - 
+[HotWaterMachine](src/main/java/org/commons/machine/HotWaterMachine.java),
+[HotMilkMachine](src/main/java/org/commons/machine/HotMilkMachine.java)
+[GreenTeaMachine](src/main/java/org/commons/machine/GreenTeaMachine.java)
+[GingerTeaMachine](src/main/java/org/commons/machine/GingerTeaMachine.java)
+[ElaichiTeaMachine](src/main/java/org/commons/machine/ElaichiTeaMachine.java)
+[CoffeMachine](src/main/java/org/commons/machine/CoffeeMachine.java)
+into ChaipointBeverage machine and plug ingredient containers for - 
+water,milk,green mixture,tea leaves syrup, ginger syrup,elaichi syrup,
+coffee syrup,sugar syrup. Hence constructing a custom beverage machine
+using injection of modules.  
+
+[BeverageComposition](src/main/java/org/commons/ingredients/BeverageComposition.java)
+ is the recipe book of a beverage and tells quantity of ingredients needed
+to prepare a particular beverage. So there are will a beverageComposition instance
+for green tea, there can be a different beverage composition for hot coffee, a 
+different beverage composition for chai point's green tea.
+
+
+[BeverageType](src/main/java/org/commons/machine/BeverageType.java)
+enumerates all the type of beverages supported by our library. If we want to
+add a new beverage, this will be the starting point where we will add an enum
+for the corresponding beverage type.
+
+[IngredientType](src/main/java/org/commons/ingredients/IngredientType.java) 
+enumerates all the types of ingredient supported by our library which serves
+as the ingredients to prepare a beverage. The ingredient types are -
+1. water
+2. milk
+3. green mixture
+4. tea leaves syrup
+5. elaichi syrup
+6. ginger syrup
+7. coffee syrup
 
 **Class diagram:**
 ![alt text](archive/images/beverage_machine.png?raw=true)
 
 ![alt text](archive/images/ingredient_and_beverage_type.png?raw=true)
-
-#### BeverageComposition:
-This class is the recipe book of a beverage and tells quantity of ingredients needed
-to prepare a particular beverage. So there are will a beverageComposition instance
-for green tea, there can be a different beverage composition for hot coffee, a 
-different beverage composition for chai point's green tea.
-
-#### BeverageType:
-It enumerates all the type of beverages supported by our library. If we want to
-add a new beverage, this will be the starting point where we will add an enum
-for the corresponding beverage type.
-
-#### IngredientType:
-It enumerates all the types of ingredient supported by our library which serves
-as the ingredients to prepare a beverage. The ingredient types are -
-- water
-- milk
-- green mixture
-- tea leaves syrup
-- elaichi syrup
-- ginger syrup
-- coffee syrup
-
-
-#### Ingredient:
-It is an interface which fixes the functionality an instance of ingredient will 
-expose. The functionalities are associated with -
-- getType
-- get quantity of ingredient
-- check if quantity is sufficient or not
-- allowing refill of the ingredient
-- retrieving a fixed amount of ingredient for beverage preparation
-
-#### ConcreteIngredient:
-Its an implementation of Ingredient interface and ingredient will be an instance 
-of this class. The ingredient type and amount of the ingredient passed in the 
-argument will differ for different ingredient instance created.
-
-#### BaseBeverageMachine:
-It implements the basic functionality of allowing N parallel requests(or people) 
-to prepare beverage. This has been ensured with "N" semaphore. It also calls 
-abstrace function "retrieve(BeverageType type)" to retrive the ingredients required for a beverage type. The
-abstract method is not thread-safe, so the classes which inherits this class
-can make it thread-safe. 
-
-So the concrete beverage machine can extend this class and depending on which type 
-of beverage they are willing to offer they can implement "retrieve(BeverageType type)"
-method.
-
-#### HotWaterMachine:
-This extends "BaseBeverageMachine" and implements a thread-safe version of
-"retrieve(BeverageType type)" using synchronised construct at method level. This
-machine only dispenses hot water and quantity is controlled by an associated
-beverage composition instance. 
-
-The class is constructed using "Builder pattern"
-to simplify the multiple argument injection and to give a feel of component-by-
-component building of a beverage machine.
-
-The beverage machine checks the availability of ingredient before starting the 
-process of retrieving the ingredients to the complicated scenario of fetch and
-rollback( undo partial retrieve) implementation. Taking a lock and then checking
-the ingredients and then retrieving the ingredient is a pessimistic approach but 
-simplifies the process of parallel brewing of beverage.
-
-We can check the ingredients which are running low, refill the ingredients if we want
-to and check the quantity of each ingredient in the machine.
-
-Similarly **HotMilkMachine, GreenTeaMachine, GingerTeachMachine, ElaichiTeaMachine,
-CoffeeMachine** is implemented.
-
-#### ChaiPointMachine
-This also inherits BaseBeverageMachine class but it is built using components of
-already built machine i.e - HotMilkMachine, GreenTeaMachine ... etc.
-
-If it wants to brew hot coffee, it sends the request to coffee machine put
-inside it abstracting the complexities of preparing coffee.
-
-Similarly if it wants to preparge elaichi tea, it sends the request to elaichi
-tea machine put inside it.
-
-Similarly for all other beverages it sends the request to respective machine 
-put inside it.
-
-The ingredient container is common. That means if water is not present, it wont
-allow any machine to prepare beverage which needs water.
 
 
 **Functional Testing "Test-Coverage":**
