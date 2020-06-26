@@ -1,6 +1,5 @@
 package org.commons.machine;
 
-import org.commons.ingredients.BeverageComposition;
 import org.commons.ingredients.ConcreteIngredientContainer;
 import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;

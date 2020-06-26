@@ -147,7 +147,7 @@ as the ingredients to prepare a beverage. The ingredient types are -
 **Class diagram:**
 ![alt text](archive/images/beverage_machine.png?raw=true)
 
-![alt text](archive/images/ingredient_and_beverage_type.png?raw=true)
+![alt text](archive/images/ingredient_container_and_beverage_type.png?raw=true)
 
 
 **Functional Testing "Test-Coverage":**

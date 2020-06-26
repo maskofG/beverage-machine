@@ -1,7 +1,6 @@
 package org.commons.machine;
 
 import com.google.gson.Gson;
-import org.commons.ingredients.BeverageComposition;
 import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;

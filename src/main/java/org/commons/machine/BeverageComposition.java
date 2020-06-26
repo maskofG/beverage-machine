@@ -1,4 +1,6 @@
-package org.commons.ingredients;
+package org.commons.machine;
+
+import org.commons.ingredients.IngredientType;
 
 import java.util.HashMap;
 import java.util.Map;
