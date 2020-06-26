@@ -7,9 +7,4 @@ public class IncorrectIngredientTypeException extends Exception {
         super(message);
         this.message = message;
     }
-
-    public IncorrectIngredientTypeException(String message, Throwable cause) {
-        super(message, cause);
-        this.message = message;
-    }
 }

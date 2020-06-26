@@ -31,7 +31,7 @@ public class InputData {
             private int green_mixture;
             private int tea_leaves_syrup;
             private int ginger_syrup;
-            private int coffe_syrup;
+            private int coffee_syrup;
             private int elaichi_syrup;
             private int sugar_syrup;
         }
@@ -119,7 +119,7 @@ public class InputData {
             case HOT_COFFEE:    beverageComposition = new BeverageComposition();
                                 beverageComposition.put(IngredientType.WATER, beverages.hot_coffee.hot_water);
                                 beverageComposition.put(IngredientType.MILK, beverages.hot_coffee.hot_milk);
-                                beverageComposition.put(IngredientType.COFFEE_SYRUP, beverages.hot_coffee.coffe_syrup);
+                                beverageComposition.put(IngredientType.COFFEE_SYRUP, beverages.hot_coffee.coffee_syrup);
                                 beverageComposition.put(IngredientType.SUGAR_SYRUP, beverages.hot_coffee.sugar_syrup);
                                 return beverageComposition;
             default:            throw new BeverageTypeNotSupportedException("Beverage Type=" + type +

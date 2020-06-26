@@ -54,7 +54,7 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
         StringBuilder dispenserResult = new StringBuilder();
         try {
             semaphore.acquire();
-            dispenserResult.append(type.name());
+            dispenserResult.append(type.getFieldDescriptor());
             brew(type);
             dispenserResult.append(" ").append(BeverageOutputMessage.PREPARED);
         }catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException rqnpe){
@@ -66,7 +66,10 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
         } catch (InterruptedException e) {
             dispenserResult.append(" ").append(BeverageOutputMessage.NOT_PREPARED).append(" ")
                     .append("because").append(" ").append("of some machine issue");
-        } finally {
+        } catch (Exception e){
+            dispenserResult.append(" ").append(BeverageOutputMessage.NOT_PREPARED).append(" ")
+                    .append("because").append(" ").append(e.getMessage());
+        }finally {
             semaphore.release();
             return dispenserResult.toString();
         }

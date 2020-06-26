@@ -50,11 +50,14 @@ public class HotWaterMachineTest {
         String output = hotWaterMachine.dispense(BeverageType.HOT_MILK);
 
         Assert.assertEquals(true, output != null);
-        Assert.assertEquals(true, !output.isEmpty() && output.contains("not supported"));
+        Assert.assertEquals(true, !output.isEmpty() &&
+                output.contains(BeverageOutputMessage.NOT_SUPPORTED));
     }
 
     /**
-     * test dispensing of hot water scenarios
+     *
+     * Testing scenarios of correct dispensing of beverage and Eventually running out
+     * of ingredients and testing if machine stops dispensing beverage
      *
      * @throws IncorrectIngredientTypeException
      */

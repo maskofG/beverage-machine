@@ -13,11 +13,15 @@ public enum IngredientType {
     COFFEE_SYRUP ("coffee_syrup", 6),
     SUGAR_SYRUP ("sugar_syrup", 7);
 
-    private String name;
+    private String fieldDescriptor;
     private int value;
 
-    private IngredientType(String name, int value) {
-        this.name = name;
+    public String getFieldDescriptor(){
+        return fieldDescriptor;
+    }
+
+    private IngredientType(String fieldDescriptor, int value) {
+        this.fieldDescriptor = fieldDescriptor;
         this.value = value;
     }
 }

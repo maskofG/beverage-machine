@@ -58,10 +58,10 @@ public class ConcreteIngredientContainer implements IngredientContainer {
     public void check(int amount)
             throws RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
             if (quantity == 0)
-                throw new RequestedQuantityNotPresentException(type.toString() + " " +
+                throw new RequestedQuantityNotPresentException(type.getFieldDescriptor() + " is " +
                         BeverageOutputMessage.QTY_NA);
             if (quantity < amount)
-                throw new RequestedQuantityNotSufficientException( type.toString() + " " +
+                throw new RequestedQuantityNotSufficientException( type.getFieldDescriptor() + " is " +
                         BeverageOutputMessage.QTY_NS);
     }
 

@@ -7,9 +7,4 @@ public class BeverageTypeNotSupportedException extends Exception {
         super(message);
         this.message = message;
     }
-
-    public BeverageTypeNotSupportedException(String message, Throwable cause) {
-        super(message, cause);
-        this.message = message;
-    }
 }

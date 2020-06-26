@@ -75,6 +75,8 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
 
     @Override
     public int ingredientLevel(IngredientType type) {
+        if (type == null ) return 0;
+
         int level = 0;
         switch (type) {
             case WATER:             level = hotWaterMachine.ingredientLevel(IngredientType.WATER);
@@ -99,6 +101,10 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
 
     @Override
     public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
+        if (type == null )
+            throw new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
+                    BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
+
         switch (type) {
             case WATER:             hotWaterMachine.refillIngredient(IngredientType.WATER, amount);
                                     break;
@@ -124,12 +130,12 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
     @Override
     public List<IngredientType> ingredientsRunningLow() {
         HashSet ingrSet = new HashSet();
-        ingrSet.add(greenTeaMachine.ingredientsRunningLow());
-        ingrSet.add(gingerTeaMachine.ingredientsRunningLow());
-        ingrSet.add(elaichiTeaMachine.ingredientsRunningLow());
-        ingrSet.add(coffeeMachine.ingredientsRunningLow());
-
-        return new ArrayList<>(ingrSet);
+        ingrSet.addAll(greenTeaMachine.ingredientsRunningLow());
+        ingrSet.addAll(gingerTeaMachine.ingredientsRunningLow());
+        ingrSet.addAll(elaichiTeaMachine.ingredientsRunningLow());
+        ingrSet.addAll(coffeeMachine.ingredientsRunningLow());
+        List<IngredientType> ingrList = new ArrayList<>(ingrSet);
+        return ingrList;
     }
 
     public static class Builder {

@@ -151,6 +151,7 @@ public class CoffeeMachine extends BaseBeverageMachine {
      */
     @Override
     public int ingredientLevel(IngredientType type) {
+        if (type == null ) return 0;
         int level = 0;
         switch (type) {
             case WATER:         level = ingredientContainer.get(IngredientType.WATER).quantity();
@@ -176,6 +177,10 @@ public class CoffeeMachine extends BaseBeverageMachine {
      */
     @Override
     public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
+        if (type == null )
+            throw new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
+                    BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
+
         switch (type) {
             case WATER:         ingredientContainer.get(IngredientType.WATER).refill(amount);
                                 break;
@@ -231,10 +236,10 @@ public class CoffeeMachine extends BaseBeverageMachine {
         private int outlet;
         private Map<IngredientType, IngredientContainer> ingredientContainer = new HashMap<>();
         private BeverageComposition beverageRecipe;
-        private IngredientContainer water;
-        private IngredientContainer milk;
-        private IngredientContainer coffeeSyrup;
-        private IngredientContainer sugarSyrup;
+        private IngredientContainer waterContainer;
+        private IngredientContainer milkContainer;
+        private IngredientContainer coffeeSyrupContainer;
+        private IngredientContainer sugarSyrupContainer;
 
         public Builder outlet(int outlet) {
             this.outlet = outlet;
@@ -243,16 +248,16 @@ public class CoffeeMachine extends BaseBeverageMachine {
 
         public Builder addIngredientContainer(IngredientContainer container) {
             switch(container.type()) {
-                case WATER:         water = container;
+                case WATER:         waterContainer = container;
                                     this.ingredientContainer.put(IngredientType.WATER, container);
                                     break;
-                case MILK:          milk = container;
+                case MILK:          milkContainer = container;
                                     this.ingredientContainer.put(IngredientType.MILK, container);
                                     break;
-                case COFFEE_SYRUP:  coffeeSyrup = container;
-                                    this.ingredientContainer.put(IngredientType.TEA_LEAVES_SYRUP, container);
+                case COFFEE_SYRUP:  coffeeSyrupContainer = container;
+                                    this.ingredientContainer.put(IngredientType.COFFEE_SYRUP, container);
                                     break;
-                case SUGAR_SYRUP:   sugarSyrup = container;
+                case SUGAR_SYRUP:   sugarSyrupContainer = container;
                                     this.ingredientContainer.put(IngredientType.SUGAR_SYRUP, container);
                                     break;
                 default:            throw new IllegalArgumentException("cannot accept ingredient other than " +
@@ -267,8 +272,8 @@ public class CoffeeMachine extends BaseBeverageMachine {
         }
 
         public CoffeeMachine build(){
-            if (beverageRecipe == null || water == null || milk == null ||
-                    coffeeSyrup == null || sugarSyrup == null)
+            if (beverageRecipe == null || waterContainer == null || milkContainer == null ||
+                    coffeeSyrupContainer == null || sugarSyrupContainer == null)
                 throw new IllegalArgumentException("argument for " + GreenTeaMachine.class.getSimpleName() +
                         " construction is not correct.");
 

@@ -156,6 +156,8 @@ public class GingerTeaMachine extends BaseBeverageMachine {
      */
     @Override
     public int ingredientLevel(IngredientType type) {
+        if (type == null ) return 0;
+
         int level = 0;
         switch (type) {
             case WATER:             level = ingredientContainer.get(IngredientType.WATER).quantity();
@@ -184,6 +186,10 @@ public class GingerTeaMachine extends BaseBeverageMachine {
     @Override
     public synchronized void refillIngredient(IngredientType type, int amount)
             throws IncorrectIngredientTypeException {
+        if (type == null )
+            throw new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
+                    BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
+
         switch (type) {
             case WATER:             ingredientContainer.get(IngredientType.WATER).refill(amount);
                                     break;

@@ -6,9 +6,12 @@
     "total_items_quantity": {
       "hot_water": 500,
       "hot_milk": 500,
-      "ginger_syrup": 100,
+      "ginger_syrup": 300,
       "sugar_syrup": 100,
-      "tea_leaves_syrup": 100
+      "tea_leaves_syrup": 100,
+      "coffee_syrup": 300,
+      "green_mixture": 300,
+      "elaichi_syrup": 300
     },
     "beverages": {
       "ginger_tea": {
@@ -25,9 +28,9 @@
         "coffee_syrup": 30
       },
       "elaichi_tea": {
-        "hot_water": 300,
+        "hot_water": 200,
         "hot_milk": 100,
-        "sugar_syrup": 50,
+        "sugar_syrup": 10,
         "tea_leaves_syrup": 30,
         "elaichi_syrup": 30
       },

@@ -15,11 +15,15 @@ public enum BeverageType {
     ELAICHI_TEA("elaichi_tea", 4),
     GINGER_TEA( "ginger_tea", 5);
 
-    private String name;
+    private String fieldDescriptor;
     private int value;
 
-    private BeverageType(String name, int value){
-        this.name = name;
+    public String getFieldDescriptor(){
+        return fieldDescriptor;
+    }
+
+    private BeverageType(String fieldDescriptor, int value){
+        this.fieldDescriptor = fieldDescriptor;
         this.value = value;
     }
 }
