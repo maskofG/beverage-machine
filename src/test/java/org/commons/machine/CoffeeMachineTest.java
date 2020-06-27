@@ -1,10 +1,13 @@
 package org.commons.machine;
 
 import com.google.gson.Gson;
+import org.commons.ingredients.ConcreteIngredientContainer;
 import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestedQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,8 +74,124 @@ public class CoffeeMachineTest {
         Exception ex = null;
         try {
             CoffeeMachine cm = new CoffeeMachine.Builder().build();
-        } catch (IllegalArgumentException ile) {
+        }catch (IllegalArgumentException ile) {
             ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).addRecipe(hotCoffeeRecipe).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).addRecipe(hotCoffeeRecipe)
+                    .addIngredientContainer(waterContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).addRecipe(hotCoffeeRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).addRecipe(hotCoffeeRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(coffeeSyrupContainer)
+                    .build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).addRecipe(hotCoffeeRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(coffeeSyrupContainer)
+                    .addIngredientContainer(sugarSyrupContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex == null);
+
+        ex = null;
+        try {
+
+            IngredientContainer elaichiContainer = new ConcreteIngredientContainer(IngredientType.ELAICHI_SYRUP, 10);
+            IngredientContainer coffeeContainer = new ConcreteIngredientContainer(IngredientType.COFFEE_SYRUP, 10);
+            CoffeeMachine cm = new CoffeeMachine.Builder()
+                    .outlet(2).addRecipe(hotCoffeeRecipe).addIngredientContainer(elaichiContainer)
+                    .addIngredientContainer(coffeeContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+    }
+
+    /**
+     * Testing brew method of the module
+     * @throws RequestedQuantityNotSufficientException
+     * @throws RequestedQuantityNotPresentException
+     */
+    @Test
+    public void testBrew() throws RequestedQuantityNotSufficientException,
+            RequestedQuantityNotPresentException {
+        Exception ex = null;
+        try {
+            coffeeMachine.brew(null);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
+        }
+
+        Assert.assertEquals( true, ex != null);
+
+        ex = null;
+        try {
+            coffeeMachine.brew(BeverageType.HOT_MILK);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
         }
 
         Assert.assertEquals(true, ex != null);
@@ -152,6 +271,15 @@ public class CoffeeMachineTest {
         Assert.assertEquals(true, e != null);
     }
 
+    /**
+     * check ingredient level functionality
+     */
+    @Test
+    public void testIngredientLevel(){
+        Assert.assertEquals(500, coffeeMachine.ingredientLevel(IngredientType.MILK));
+        Assert.assertEquals(0, coffeeMachine.ingredientLevel(null));
+        Assert.assertEquals(0, coffeeMachine.ingredientLevel(IngredientType.GREEN_MIXTURE));
+    }
 
 
     @Test
@@ -188,5 +316,51 @@ public class CoffeeMachineTest {
         coffeeMachine.refillIngredient(IngredientType.MILK, 400);
         coffeeMachine.refillIngredient(IngredientType.COFFEE_SYRUP, 30);
         coffeeMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 50);
+
+        //refilling the ingredients for 10 cups so that all empties together
+        coffeeMachine.refillIngredient(IngredientType.WATER, 500);
+        coffeeMachine.refillIngredient(IngredientType.MILK, 3500);
+        //coffee syrup is 300 and per cup quantity required is 30
+        //its already sufficient to brew to 10 cups
+        coffeeMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 400);
+
+        for(int i=0;i<10;i++) {
+            output = coffeeMachine.dispense(BeverageType.HOT_COFFEE);
+            Assert.assertEquals(true, output.contains(BeverageOutputMessage.PREPARED));
+        }
+
+        ingredientTypeList = coffeeMachine.ingredientsRunningLow();
+        Assert.assertEquals(4, ingredientTypeList.size());
+        Assert.assertEquals(true, ingredientTypeList.contains(IngredientType.WATER) &&
+                ingredientTypeList.contains(IngredientType.MILK) &&
+                ingredientTypeList.contains(IngredientType.COFFEE_SYRUP) &&
+                ingredientTypeList.contains(IngredientType.SUGAR_SYRUP));
+
+        // if we try to dispense a cup of coffee, it will not
+        output = coffeeMachine.dispense(BeverageType.HOT_COFFEE);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_water"));
+
+        //refill water less than minimum required limited => the message from
+        //coffee machine changes
+        coffeeMachine.refillIngredient(IngredientType.WATER, 90);
+        output = coffeeMachine.dispense(BeverageType.HOT_COFFEE);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_water"));
+        //bring water level back to 500 from 90
+        coffeeMachine.refillIngredient(IngredientType.WATER, 410);
+        output = coffeeMachine.dispense(BeverageType.HOT_COFFEE);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_milk"));
+        coffeeMachine.refillIngredient(IngredientType.MILK, 390);
+        output = coffeeMachine.dispense(BeverageType.HOT_COFFEE);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_milk"));
+        //bring milk level back to 500 from 390
+        coffeeMachine.refillIngredient(IngredientType.MILK, 110);
+        coffeeMachine.refillIngredient(IngredientType.COFFEE_SYRUP, 300);
+        coffeeMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 100);
     }
 }

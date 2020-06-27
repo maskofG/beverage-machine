@@ -1,10 +1,13 @@
 package org.commons.machine;
 
 import com.google.gson.Gson;
+import org.commons.ingredients.ConcreteIngredientContainer;
 import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestedQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +70,7 @@ public class GingerTeaMachineTest {
     }
 
     /**
-     * Testing GingerTeaMachine.Builder class
+     * testing GingerTeaMachine.Builder class
      */
     @Test
     public void testBuilder() {
@@ -76,6 +79,137 @@ public class GingerTeaMachineTest {
             GingerTeaMachine gtm = new GingerTeaMachine.Builder().build();
         }catch (IllegalArgumentException ile) {
             ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe)
+                    .addIngredientContainer(waterContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(teaLeavesContainer)
+                    .build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(teaLeavesContainer)
+                    .addIngredientContainer(gingerSyrupContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(teaLeavesContainer)
+                    .addIngredientContainer(gingerSyrupContainer)
+                    .addIngredientContainer(sugarSyrupContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex == null);
+
+        ex = null;
+        try {
+
+            IngredientContainer elaichiContainer = new ConcreteIngredientContainer(IngredientType.ELAICHI_SYRUP, 10);
+            IngredientContainer coffeeContainer = new ConcreteIngredientContainer(IngredientType.COFFEE_SYRUP, 10);
+            GingerTeaMachine gtm = new GingerTeaMachine.Builder()
+                    .outlet(2).addRecipe(gingerTeaRecipe).addIngredientContainer(elaichiContainer)
+                    .addIngredientContainer(coffeeContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+    }
+
+    /**
+     * Testing brew method of the module
+     * @throws RequestedQuantityNotSufficientException
+     * @throws RequestedQuantityNotPresentException
+     */
+    @Test
+    public void testBrew() throws RequestedQuantityNotSufficientException,
+            RequestedQuantityNotPresentException {
+        Exception ex = null;
+        try {
+            gingerTeaMachine.brew(null);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
+        }
+
+        Assert.assertEquals( true, ex != null);
+
+        ex = null;
+        try {
+            gingerTeaMachine.brew(BeverageType.HOT_MILK);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
         }
 
         Assert.assertEquals(true, ex != null);
@@ -148,7 +282,9 @@ public class GingerTeaMachineTest {
         gingerTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 20);
     }
 
-
+    /**
+     * test the refill ingredient api
+     */
     @Test
     public void testRefillIngredient(){
         Exception e = null;
@@ -170,7 +306,21 @@ public class GingerTeaMachineTest {
         Assert.assertEquals(true, e != null);
     }
 
+    /**
+     * check ingredient level functionality
+     */
+    @Test
+    public void testIngredientLevel(){
+        Assert.assertEquals(500, gingerTeaMachine.ingredientLevel(IngredientType.WATER));
+        Assert.assertEquals(0, gingerTeaMachine.ingredientLevel(null));
+        Assert.assertEquals(0, gingerTeaMachine.ingredientLevel(IngredientType.ELAICHI_SYRUP));
+    }
 
+    /**
+     * tests api which gives a list of ingredients which are running low and needs
+     * refill
+     * @throws IncorrectIngredientTypeException
+     */
     @Test
     public void testIngredientRunningLow() throws IncorrectIngredientTypeException {
         /**
@@ -210,6 +360,62 @@ public class GingerTeaMachineTest {
         gingerTeaMachine.refillIngredient(IngredientType.TEA_LEAVES_SYRUP, 60);
         gingerTeaMachine.refillIngredient(IngredientType.GINGER_SYRUP, 20);
         gingerTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 20);
+
+        //refill the ingredients such that after dispensing a fixed number of cups all
+        //quantity is zero
+        //total items:     water=500,milk=500,tea=100,ginger=300,sugar=100
+        //recipe for a cup-water=200,milk=100,tea=30,ginger=10,sugar=10
+        //refil ingredients so that we can get 30 cups of ginger tea and
+        //all ingredients gets empty after that.
+        gingerTeaMachine.refillIngredient(IngredientType.WATER, 5500);
+        gingerTeaMachine.refillIngredient(IngredientType.MILK, 2500);
+        gingerTeaMachine.refillIngredient(IngredientType.TEA_LEAVES_SYRUP, 800);
+        //ginger is sufficient to prepare 30 cups of ginger tea
+        gingerTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 200);
+
+        for(int i=0;i<30;i++) {
+            output = gingerTeaMachine.dispense(BeverageType.GINGER_TEA);
+            Assert.assertEquals(true, output.contains(BeverageOutputMessage.PREPARED));
+        }
+
+        ingredientTypeList = gingerTeaMachine.ingredientsRunningLow();
+        Assert.assertEquals(5, ingredientTypeList.size());
+        Assert.assertEquals(true, ingredientTypeList.contains(IngredientType.WATER) &&
+                                    ingredientTypeList.contains(IngredientType.MILK) &&
+                                    ingredientTypeList.contains(IngredientType.TEA_LEAVES_SYRUP) &&
+                                    ingredientTypeList.contains(IngredientType.GINGER_SYRUP) &&
+                                    ingredientTypeList.contains(IngredientType.SUGAR_SYRUP));
+
+        // if we try to dispense a cup of ginger tea, it will not
+        output = gingerTeaMachine.dispense(BeverageType.GINGER_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_water"));
+
+        //refill water less than minimum required limited => the message from
+        //ginger tea machine changes
+        gingerTeaMachine.refillIngredient(IngredientType.WATER, 90);
+        output = gingerTeaMachine.dispense(BeverageType.GINGER_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_water"));
+        //bring water level back to 500 from 90
+        gingerTeaMachine.refillIngredient(IngredientType.WATER, 410);
+        //if we again try to dispense the tea, the system will respond with
+        // "ginger_tea cannot be prepared"
+        output = gingerTeaMachine.dispense(BeverageType.GINGER_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_milk"));
+        gingerTeaMachine.refillIngredient(IngredientType.MILK, 90);
+        output = gingerTeaMachine.dispense(BeverageType.GINGER_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_milk"));
+        //bring milk level back to 500 from 90
+        gingerTeaMachine.refillIngredient(IngredientType.MILK, 410);
+        gingerTeaMachine.refillIngredient(IngredientType.TEA_LEAVES_SYRUP, 100);
+        gingerTeaMachine.refillIngredient(IngredientType.GINGER_SYRUP, 300);
+        gingerTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 100);
+
     }
 
 }

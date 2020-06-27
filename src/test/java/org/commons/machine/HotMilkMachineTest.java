@@ -5,12 +5,15 @@ import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestedQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 public class HotMilkMachineTest {
     private Gson gson = new Gson();
@@ -43,6 +46,76 @@ public class HotMilkMachineTest {
             HotMilkMachine hmm = new HotMilkMachine.Builder().build();
         }catch (IllegalArgumentException ile) {
             ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            HotMilkMachine hmm = new HotMilkMachine.Builder().outlet(2).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            HotMilkMachine hmm = new HotMilkMachine.Builder().outlet(2)
+                    .beverageRecipe(hotmilkRecipe).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            HotMilkMachine hmm = new HotMilkMachine.Builder().outlet(2)
+                    .milkContainer(milkContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            HotMilkMachine hmm = new HotMilkMachine.Builder().outlet(2)
+                    .beverageRecipe(hotmilkRecipe).milkContainer(milkContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex == null);
+    }
+
+    /**
+     * Testing brew method of the module
+     * @throws RequestedQuantityNotSufficientException
+     * @throws RequestedQuantityNotPresentException
+     */
+    @Test
+    public void testBrew() throws RequestedQuantityNotSufficientException,
+            RequestedQuantityNotPresentException {
+        Exception ex = null;
+        try {
+            hotMilkMachine.brew(null);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
+        }
+
+        Assert.assertEquals( true, ex != null);
+
+        ex = null;
+        try {
+            hotMilkMachine.brew(BeverageType.HOT_WATER);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
         }
 
         Assert.assertEquals(true, ex != null);
@@ -116,18 +189,55 @@ public class HotMilkMachineTest {
 
     }
 
-//    @Test
-//    private void testRefillIngredient(){
-//
-//    }
-//
-//    @Test
-//    public void testIngredientLevel(){
-//
-//    }
-//
-//    @Test
-//    public void testIngredientRunningLow(){
-//
-//    }
+    /**
+     * test refill ingredient functionality
+     */
+    @Test
+    public void testRefillIngredient(){
+        Exception e = null;
+        try {
+            hotMilkMachine.refillIngredient(null, 20);
+        } catch (IncorrectIngredientTypeException iite) {
+            e = iite;
+        }
+
+        Assert.assertEquals(true, e != null);
+
+        e = null;
+        try {
+            hotMilkMachine.refillIngredient(IngredientType.WATER, 20);
+        } catch (IncorrectIngredientTypeException iite) {
+            e = iite;
+        }
+
+        Assert.assertEquals(true, e != null);
+    }
+    /**
+     * check ingredient level functionality
+     */
+    @Test
+    public void testIngredientLevel(){
+        Assert.assertEquals(500, hotMilkMachine.ingredientLevel(IngredientType.MILK));
+        Assert.assertEquals(0, hotMilkMachine.ingredientLevel(null));
+        Assert.assertEquals(0, hotMilkMachine.ingredientLevel(IngredientType.WATER));
+    }
+
+    @Test
+    public void testIngredientRunningLow() throws IncorrectIngredientTypeException {
+        Assert.assertEquals(true, hotMilkMachine.ingredientsRunningLow().isEmpty());
+
+        String output;
+        boolean prepared = true;
+        for(int i=0;i<10;i++) {
+            output = hotMilkMachine.dispense(BeverageType.HOT_MILK);
+            prepared = prepared && output.contains(BeverageOutputMessage.PREPARED);
+        }
+
+        List<IngredientType> ingredientTypeList = hotMilkMachine.ingredientsRunningLow();
+
+        Assert.assertEquals(1, ingredientTypeList.size());
+        Assert.assertEquals(IngredientType.MILK, ingredientTypeList.get(0));
+
+        hotMilkMachine.refillIngredient(IngredientType.MILK, 500);
+    }
 }

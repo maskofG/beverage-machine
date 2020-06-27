@@ -5,6 +5,8 @@ import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestedQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -144,10 +146,113 @@ public class ChaiPointMachineTest {
     @Test
     public void testBuilder() {
         Exception ex = null;
+        ChaiPointBeverageMachine cpbm;
+
         try {
-            ChaiPointBeverageMachine cpbm = new ChaiPointBeverageMachine.Builder().build();
+             cpbm = new ChaiPointBeverageMachine.Builder().build();
         } catch (IllegalArgumentException ile) {
             ex = ile;
+        }
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).addMachine(hotWaterMachine).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).addMachine(hotWaterMachine)
+                    .addMachine(hotMilkMachine).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).addMachine(hotWaterMachine)
+                    .addMachine(hotMilkMachine).addMachine(greenTeaMachine).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).addMachine(hotWaterMachine)
+                    .addMachine(hotMilkMachine).addMachine(greenTeaMachine)
+                    .addMachine(gingerTeaMachine).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).addMachine(hotWaterMachine)
+                    .addMachine(hotMilkMachine).addMachine(greenTeaMachine)
+                    .addMachine(gingerTeaMachine).addMachine(elaichiTeaMachine).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        try {
+            ex = null;
+            cpbm = new ChaiPointBeverageMachine.Builder().outlet(2).addMachine(hotWaterMachine)
+                    .addMachine(hotMilkMachine).addMachine(greenTeaMachine)
+                    .addMachine(gingerTeaMachine).addMachine(elaichiTeaMachine)
+                    .addMachine(coffeeMachine).build();
+        } catch (IllegalArgumentException ila){
+            ex = ila;
+        }
+
+        Assert.assertEquals(true, ex == null);
+    }
+
+    /**
+     * Testing brew method of the module
+     * @throws RequestedQuantityNotSufficientException
+     * @throws RequestedQuantityNotPresentException
+     */
+    @Test
+    public void testBrew() throws RequestedQuantityNotSufficientException,
+            RequestedQuantityNotPresentException {
+        Exception ex = null;
+        try {
+            chaiPointBeverageMachine.brew(null);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
+        }
+
+        Assert.assertEquals( true, ex != null);
+
+        ex = null;
+        try {
+            hotWaterMachine.brew(BeverageType.HOT_MILK);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
         }
 
         Assert.assertEquals(true, ex != null);
@@ -394,6 +499,15 @@ public class ChaiPointMachineTest {
         chaiPointBeverageMachine.refillIngredient(IngredientType.GREEN_MIXTURE, 60);
         chaiPointBeverageMachine.refillIngredient(IngredientType.GINGER_SYRUP, 60);
         chaiPointBeverageMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 100);
+    }
+
+    /**
+     * testing edge cases and branch cases for ingredientLevel function
+     */
+    @Test
+    public void testIngredientLevel(){
+        Assert.assertEquals(0, chaiPointBeverageMachine.ingredientLevel(null));
+        Assert.assertEquals(500, chaiPointBeverageMachine.ingredientLevel(IngredientType.MILK));
     }
 
 }

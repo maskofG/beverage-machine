@@ -1,10 +1,13 @@
 package org.commons.machine;
 
 import com.google.gson.Gson;
+import org.commons.ingredients.ConcreteIngredientContainer;
 import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestedQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,9 +78,141 @@ public class ElaichiTeaMachineTest {
     public void testBuilder() {
         Exception ex = null;
         try {
-            ElaichiTeaMachine etm = new ElaichiTeaMachine.Builder().build();
-        } catch (IllegalArgumentException ile) {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder().build();
+        }catch (IllegalArgumentException ile) {
             ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe)
+                    .addIngredientContainer(waterContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(teaLeavesContainer)
+                    .build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(teaLeavesContainer)
+                    .addIngredientContainer(elaichiSyrupContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(milkContainer)
+                    .addIngredientContainer(teaLeavesContainer)
+                    .addIngredientContainer(elaichiSyrupContainer)
+                    .addIngredientContainer(sugarSyrupContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex == null);
+
+        ex = null;
+        try {
+
+            IngredientContainer gingerSyrupContainer = new ConcreteIngredientContainer(IngredientType.GINGER_SYRUP, 10);
+            IngredientContainer coffeeContainer = new ConcreteIngredientContainer(IngredientType.COFFEE_SYRUP, 10);
+            ElaichiTeaMachine gtm = new ElaichiTeaMachine.Builder()
+                    .outlet(2).addRecipe(elaichiTeaRecipe)
+                    .addIngredientContainer(gingerSyrupContainer)
+                    .addIngredientContainer(coffeeContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+    }
+
+    /**
+     * Testing brew method of the module
+     * @throws RequestedQuantityNotSufficientException
+     * @throws RequestedQuantityNotPresentException
+     */
+    @Test
+    public void testBrew() throws RequestedQuantityNotSufficientException,
+            RequestedQuantityNotPresentException {
+        Exception ex = null;
+        try {
+            elaichiTeaMachine.brew(null);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
+        }
+
+        Assert.assertEquals( true, ex != null);
+
+        ex = null;
+        try {
+            elaichiTeaMachine.brew(BeverageType.HOT_MILK);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
         }
 
         Assert.assertEquals(true, ex != null);
@@ -173,7 +308,21 @@ public class ElaichiTeaMachineTest {
         Assert.assertEquals(true, e != null);
     }
 
+    /**
+     * check ingredient level functionality
+     */
+    @Test
+    public void testIngredientLevel(){
+        Assert.assertEquals(500, elaichiTeaMachine.ingredientLevel(IngredientType.WATER));
+        Assert.assertEquals(0, elaichiTeaMachine.ingredientLevel(null));
+        Assert.assertEquals(0, elaichiTeaMachine.ingredientLevel(IngredientType.GINGER_SYRUP));
+    }
 
+    /**
+     * test the api which gives the list of ingredient type which are running low on
+     * quantity
+     * @throws IncorrectIngredientTypeException
+     */
     @Test
     public void testIngredientRunningLow() throws IncorrectIngredientTypeException {
         Assert.assertEquals(true, elaichiTeaMachine.ingredientsRunningLow().isEmpty());
@@ -210,5 +359,59 @@ public class ElaichiTeaMachineTest {
         elaichiTeaMachine.refillIngredient(IngredientType.ELAICHI_SYRUP, 60);
         elaichiTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 20);
 
+        //refill the ingredients such that after dispensing a fixed number of cups all
+        //quantity is zero
+        //total items:     water=500,milk=500,tea=100,elaichi=300,sugar=100
+        //recipe for a cup-water=200,milk=100,tea=30,elaichi=30,sugar=10
+        //refil ingredients so that we can get 10 cups of elaichi tea and
+        //all ingredients gets empty after that.
+        elaichiTeaMachine.refillIngredient(IngredientType.WATER, 1500);
+        elaichiTeaMachine.refillIngredient(IngredientType.MILK, 500);
+        elaichiTeaMachine.refillIngredient(IngredientType.TEA_LEAVES_SYRUP, 200);
+        //elaichi syrup is sufficient to prepare 10 cups of elaichi tea
+        //sugar syrup is also sufficient to prepare 10 cups of elaichi tea
+
+        for(int i=0;i<10;i++) {
+            output = elaichiTeaMachine.dispense(BeverageType.ELAICHI_TEA);
+            Assert.assertEquals(true, output.contains(BeverageOutputMessage.PREPARED));
+        }
+
+        ingredientTypeList = elaichiTeaMachine.ingredientsRunningLow();
+        Assert.assertEquals(5, ingredientTypeList.size());
+        Assert.assertEquals(true, ingredientTypeList.contains(IngredientType.WATER) &&
+                ingredientTypeList.contains(IngredientType.MILK) &&
+                ingredientTypeList.contains(IngredientType.TEA_LEAVES_SYRUP) &&
+                ingredientTypeList.contains(IngredientType.ELAICHI_SYRUP) &&
+                ingredientTypeList.contains(IngredientType.SUGAR_SYRUP));
+
+        // if we try to dispense a cup of ginger tea, it will not
+        output = elaichiTeaMachine.dispense(BeverageType.ELAICHI_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_water"));
+
+        //refill water less than minimum required limited => the message from
+        //ginger tea machine changes
+        elaichiTeaMachine.refillIngredient(IngredientType.WATER, 90);
+        output = elaichiTeaMachine.dispense(BeverageType.ELAICHI_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_water"));
+        //bring water level back to 500 from 90
+        elaichiTeaMachine.refillIngredient(IngredientType.WATER, 410);
+        //if we again try to dispense the tea, the system will respond with
+        // "ginger_tea cannot be prepared"
+        output = elaichiTeaMachine.dispense(BeverageType.ELAICHI_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_milk"));
+        elaichiTeaMachine.refillIngredient(IngredientType.MILK, 90);
+        output = elaichiTeaMachine.dispense(BeverageType.ELAICHI_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_milk"));
+        //bring milk level back to 500 from 90
+        elaichiTeaMachine.refillIngredient(IngredientType.MILK, 410);
+        elaichiTeaMachine.refillIngredient(IngredientType.TEA_LEAVES_SYRUP, 100);
+        elaichiTeaMachine.refillIngredient(IngredientType.ELAICHI_SYRUP, 300);
+        elaichiTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 100);
     }
 }

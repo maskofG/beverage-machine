@@ -20,56 +20,12 @@ interconnecting N outlet dispensing machine with mutliple brewing machine
 and connect these brewing machines with a set of required ingredient containers
 to dispense multiple beverages to N people paralelly.
 
-For example:
-```
-1. Hot water machine = N outlet module + 
-                       hot water brewing machine + 
-                       water container
-2. Hot milk machine = N outlet module + 
-                      hot milk brewing machine + 
-                      milk container
-3. Green tea machine = N outlet module + 
-                        green tea brewing machine + 
-                        water container +
-                        green mixture container + 
-                        ginger syrup container + 
-                        sugar syrup container
-4. Ginger tea machine = N outlet module + 
-                        ginger tea brewing machine + 
-                        water container +
-                        milk container + 
-                        tea leaves syrup container + 
-                        ginger syrup container +
-                        sugar syrup container;
-5. Elaichi tea machine = N outlet module + 
-                         elaichi tea brewing machine + 
-                         water container +
-                         milk container + 
-                         tea leaves syrup container + 
-                         elaichi syrup container +
-                         sugar syrup container;
-6. Hot coffee machine = N outlet module + 
-                        hot cofee brewing machine + 
-                        water container +
-                        milk container + 
-                        coffe container +
-                        sugar syrup container;
-7. Chai point machine =  N outlet module + 
-                      hot water brewing machine +
-                      hot milk brewing machine +
-                      green tea brewing machine +
-                      ginger tea brewing machine +
-                      elaichi tea brewing machine +
-                      hot coffee brewing machine + 
-                      water container +
-                      milk container +
-                      green mixture container +
-                      tea leaves syrup container +
-                      ginger syrup container +
-                      elaichi syrup container +
-                      coffee syrup container +
-                      sugar syrup container;
-```
+The modular design will look like this:
+
+
+![alt_text](archive/images/beverage_machine_design.png)
+
+
 
 **Structure of the code:**
 
@@ -145,9 +101,9 @@ as the ingredients to prepare a beverage. The ingredient types are -
 7. coffee syrup
 
 **Class diagram:**
-![alt text](archive/images/beverage_machine.png?raw=true)
+![alt text](archive/images/beverage_machine.png)
 
-![alt text](archive/images/ingredient_container_and_beverage_type.png?raw=true)
+![alt text](archive/images/ingredient_container_and_beverage_type.png)
 
 
 **Functional Testing "Test-Coverage":**

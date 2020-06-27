@@ -26,7 +26,7 @@ import java.util.List;
  *      7. coffee syrup
  *      8. sugar syrup
  *
- *  CoffeeMachine = hot water brewing module +
+ *  ChaiPoint Machine = hot water brewing module +
  *                  hot milk brewing module +
  *                  green tea brewing module +
  *                  ginger tea brewing module +
@@ -55,6 +55,10 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
     @Override
     public synchronized void brew(BeverageType type) throws BeverageTypeNotSupportedException,
             RequestedQuantityNotPresentException, RequestedQuantityNotSufficientException {
+        if (type == null)
+            throw new BeverageTypeNotSupportedException("BeverageType=null "+
+                    BeverageOutputMessage.NOT_SUPPORTED + " in " + this.getClass().getSimpleName());
+
         switch (type) {
             case HOT_WATER:     hotWaterMachine.brew(BeverageType.HOT_WATER);
                                 break;
@@ -68,7 +72,7 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
                                 break;
             case HOT_COFFEE:    coffeeMachine.brew(BeverageType.HOT_COFFEE);
                                 break;
-            default:            throw new BeverageTypeNotSupportedException("BeverageType="+ type + " " +
+            default:            throw new BeverageTypeNotSupportedException("BeverageType=null "+
                                 BeverageOutputMessage.NOT_SUPPORTED + " in " + this.getClass().getSimpleName());
         }
     }
@@ -101,7 +105,7 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
 
     @Override
     public synchronized void refillIngredient(IngredientType type, int amount) throws IncorrectIngredientTypeException {
-        if (type == null )
+        if (type == null)
             throw new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
                     BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
 
@@ -122,8 +126,8 @@ public class ChaiPointBeverageMachine extends BaseBeverageMachine {
                                     break;
             case SUGAR_SYRUP:       gingerTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, amount);
                                     break;
-            default:                throw new IncorrectIngredientTypeException("Refilling of Ingredient Type=" + type +
-                                    " is not supported in " + getClass().getSimpleName());
+            default:                new IncorrectIngredientTypeException("Refill of Ingredient Type=" + type +
+                                    BeverageOutputMessage.NOT_SUPPORTED  + " in " + this.getClass().getSimpleName());
         }
     }
 

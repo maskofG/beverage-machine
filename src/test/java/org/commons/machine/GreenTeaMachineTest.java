@@ -1,16 +1,20 @@
 package org.commons.machine;
 
 import com.google.gson.Gson;
+import org.commons.ingredients.ConcreteIngredientContainer;
 import org.commons.ingredients.IngredientContainer;
 import org.commons.ingredients.IngredientType;
 import org.exceptions.BeverageTypeNotSupportedException;
 import org.exceptions.IncorrectIngredientTypeException;
+import org.exceptions.RequestedQuantityNotPresentException;
+import org.exceptions.RequestedQuantityNotSufficientException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -71,6 +75,130 @@ public class GreenTeaMachineTest {
             GreenTeaMachine gtm = new GreenTeaMachine.Builder().build();
         }catch (IllegalArgumentException ile) {
             ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).addRecipe(greenTeaRecipe).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .addRecipe(greenTeaRecipe).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).addRecipe(greenTeaRecipe)
+                    .addIngredientContainer(waterContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).addRecipe(greenTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(greenMixtureContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).addRecipe(greenTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(greenMixtureContainer)
+                    .addIngredientContainer(gingerSyrupContainer)
+                    .build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+
+        ex = null;
+        try {
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).addRecipe(greenTeaRecipe)
+                    .addIngredientContainer(waterContainer)
+                    .addIngredientContainer(greenMixtureContainer)
+                    .addIngredientContainer(gingerSyrupContainer)
+                    .addIngredientContainer(sugarSyrupContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex == null);
+
+        ex = null;
+        try {
+            IngredientContainer coffeeContainer = new ConcreteIngredientContainer(IngredientType.COFFEE_SYRUP, 10);
+            GreenTeaMachine gtm = new GreenTeaMachine.Builder()
+                    .outlet(2).addRecipe(greenTeaRecipe)
+                    .addIngredientContainer(coffeeContainer).build();
+        }catch (IllegalArgumentException ile) {
+            ex = ile;
+        }
+
+        Assert.assertEquals(true, ex != null);
+    }
+
+    /**
+     * Testing brew method of the module
+     * @throws RequestedQuantityNotSufficientException
+     * @throws RequestedQuantityNotPresentException
+     */
+    @Test
+    public void testBrew() throws RequestedQuantityNotSufficientException,
+            RequestedQuantityNotPresentException {
+        Exception ex = null;
+        try {
+            greenTeaMachine.brew(null);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
+        }
+
+        Assert.assertEquals( true, ex != null);
+
+        ex = null;
+        try {
+            greenTeaMachine.brew(BeverageType.HOT_MILK);
+        } catch (BeverageTypeNotSupportedException btnse) {
+            ex = btnse;
+        } catch (RequestedQuantityNotPresentException | RequestedQuantityNotSufficientException e) {
+            throw e;
         }
 
         Assert.assertEquals(true, ex != null);
@@ -139,6 +267,10 @@ public class GreenTeaMachineTest {
         greenTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 100);
     }
 
+
+    /**
+     * Tests the functionality of refill of ingredients
+     */
     @Test
     public void testRefillIngredient(){
         Exception e = null;
@@ -160,9 +292,57 @@ public class GreenTeaMachineTest {
         Assert.assertEquals(true, e != null);
     }
 
-
+    /**
+     * check ingredient level functionality
+     */
     @Test
-    public void testIngredientRunningLow(){
+    public void testIngredientLevel(){
+        Assert.assertEquals(500, greenTeaMachine.ingredientLevel(IngredientType.WATER));
+        Assert.assertEquals(0, greenTeaMachine.ingredientLevel(null));
+        Assert.assertEquals(0, greenTeaMachine.ingredientLevel(IngredientType.MILK));
+    }
+
+    /**
+     * test api which gives the list ingredients which are running low on
+     * quantity
+     * @throws IncorrectIngredientTypeException
+     */
+    @Test
+    public void testIngredientRunningLow() throws IncorrectIngredientTypeException {
         Assert.assertEquals(true, greenTeaMachine.ingredientsRunningLow().isEmpty());
+
+        greenTeaMachine.refillIngredient(IngredientType.WATER, 500);
+        greenTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 400);
+        //sugar syrup total quantity = 300 and per cup quantity is 30
+        //green mixture total quantity = 300 and cup quantity is 30
+
+        for(int i=0;i<10;i++){
+            greenTeaMachine.dispense(BeverageType.GREEN_TEA);
+        }
+
+        List<IngredientType> ingredientTypeList = greenTeaMachine.ingredientsRunningLow();
+        Assert.assertEquals(4, ingredientTypeList.size());
+        Assert.assertEquals(true, ingredientTypeList.contains(IngredientType.WATER) &&
+                ingredientTypeList.contains(IngredientType.GREEN_MIXTURE) &&
+                ingredientTypeList.contains(IngredientType.GINGER_SYRUP) &&
+                ingredientTypeList.contains(IngredientType.SUGAR_SYRUP));
+
+        // if we try to dispense a cup of green tea, it will fail
+        String output = greenTeaMachine.dispense(BeverageType.GREEN_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.QTY_NA) &&
+                output.contains("hot_water"));
+
+        //refill water less than minimum required limited => the message from
+        //green tea machine changes
+        greenTeaMachine.refillIngredient(IngredientType.WATER, 90);
+        output = greenTeaMachine.dispense(BeverageType.GREEN_TEA);
+        Assert.assertEquals(true, output.contains(BeverageOutputMessage.NOT_PREPARED) &&
+                output.contains(BeverageOutputMessage.QTY_NS) &&
+                output.contains("hot_water"));
+        //bring water level back to 500 from 90
+        greenTeaMachine.refillIngredient(IngredientType.WATER, 410);
+        greenTeaMachine.refillIngredient(IngredientType.GREEN_MIXTURE, 300);
+        greenTeaMachine.refillIngredient(IngredientType.GINGER_SYRUP, 300);
+        greenTeaMachine.refillIngredient(IngredientType.SUGAR_SYRUP, 100);
     }
 }

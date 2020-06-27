@@ -63,9 +63,6 @@ public abstract class BaseBeverageMachine implements BeverageMachine{
         } catch (BeverageTypeNotSupportedException btns) {
             dispenserResult.append(" ").append(BeverageOutputMessage.NOT_PREPARED).append(" ")
                     .append("because").append(" ").append(btns.getMessage());
-        } catch (InterruptedException e) {
-            dispenserResult.append(" ").append(BeverageOutputMessage.NOT_PREPARED).append(" ")
-                    .append("because").append(" ").append("of some machine issue");
         } catch (Exception e){
             dispenserResult.append(" ").append(BeverageOutputMessage.NOT_PREPARED).append(" ")
                     .append("because").append(" ").append(e.getMessage());
